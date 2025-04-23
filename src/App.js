@@ -126,26 +126,26 @@ const HomePage = () => {
   const faqs = [
     {
       question: "1. What is a cryptocurrency exchange?",
-      answer: "Cryptocurrency exchanges are digital marketplaces that enable users to buy and sell cryptocurrencies like Bitcoin, Ethereum, and Tether. The Binance exchange is the largest crypto exchange by trade volume."
+      answer: "Cryptocurrency exchanges are digital marketplaces that enable users to buy and sell cryptocurrencies like Bitcoin, Ethereum, and Tether. The Zentron exchange is the largest crypto exchange by trade volume."
     },
     {
-      question: "2. What products does Binance provide?",
-      answer: "Binance offers spot trading, futures trading, staking, lending, launchpad, savings accounts, and various other crypto financial services."
+      question: "2. What products does Zentron provide?",
+      answer: "Zentron offers spot trading, futures trading, staking, lending, launchpad, savings accounts, and various other crypto financial services."
     },
     {
-      question: "3. How to buy Bitcoin and other cryptocurrencies on Binance",
-      answer: "You can buy cryptocurrencies on Binance using credit/debit cards, bank transfers, P2P trading, or by converting other cryptocurrencies."
+      question: "3. How to buy Bitcoin and other cryptocurrencies on Zentron",
+      answer: "You can buy cryptocurrencies on Zentron using credit/debit cards, bank transfers, P2P trading, or by converting other cryptocurrencies."
     },
     {
       question: "4. How to track cryptocurrency prices",
-      answer: "Binance provides real-time price charts with technical indicators, market depth data, and price alerts for all listed cryptocurrencies."
+      answer: "Zentron provides real-time price charts with technical indicators, market depth data, and price alerts for all listed cryptocurrencies."
     },
     {
-      question: "5. How to trade cryptocurrencies on Binance",
+      question: "5. How to trade cryptocurrencies on Zentron",
       answer: "After account verification and depositing funds, use the trading interface to place market, limit, or stop-limit orders with advanced charting tools."
     },
     {
-      question: "6. How to earn from crypto on Binance",
+      question: "6. How to earn from crypto on Zentron",
       answer: "Earn through trading, staking, savings products, launchpool, liquidity farming, or referral programs with competitive APYs."
     }
   ];
@@ -155,7 +155,7 @@ const HomePage = () => {
       {/* Header */}
       <Header />
 
-      <h3 className="heading">Smarter Crypto Trading with AIM-Binance!</h3>
+      <h3 className="heading">The Future of Trading Starts Here!</h3>
 
     {/* Getting Started Steps Section */}
     <div className="stepsContainer">
@@ -202,7 +202,7 @@ const HomePage = () => {
           <div className="stepNumber">3</div>
           <h3 className="stepTitle">Deposit Funds</h3>
           <p className="stepDescription">
-            Add funds to your Binance account via a variety of methods and 
+            Add funds to your Zentron account via a variety of methods and 
             follow two-factor-authentication to secure your account.
           </p>
         </div>
@@ -298,7 +298,7 @@ const HomePage = () => {
               <div className="coinSymbol">ETH</div>
             </div>
             <div className="trendingItem">
-              <div className="coinName">Binance Coin</div>
+              <div className="coinName">Zentron Coin</div>
               <div className="coinChange negative">-0.3%</div>
               <div className="coinSymbol">BNB</div>
             </div>
@@ -395,7 +395,7 @@ const HomePage = () => {
         </div>
         <div className="statCard">
           <div className="statHeader">BNB/USDT</div>
-          <div className="statName">Binance Coin</div>
+          <div className="statName">Zentron Coin</div>
           <div className="statValue">334.56</div>
           <div className="statChange positive">+0.87%</div>
         </div>
@@ -436,18 +436,18 @@ const HomePage = () => {
   </div>
         <div className="newsGrid">
           <div className="newsItem">
-            <h3>Binance Launches New Staking Feature</h3>
-            <p>Binance has just released a new staking feature, allowing users to earn passive income on their cryptocurrency holdings.</p>
+            <h3>Zentron Launches New Staking Feature</h3>
+            <p>Zentron has just released a new staking feature, allowing users to earn passive income on their cryptocurrency holdings.</p>
             <div className="newsTimestamp">2 hours ago</div>
           </div>
           <div className="newsItem">
-            <h3>Binance Adds Support for New Trading Pairs</h3>
-            <p>Binance has added support for several new trading pairs, including BTC/GBP, ETH/JPY, and BNB/AUD.</p>
+            <h3>Zentron Adds Support for New Trading Pairs</h3>
+            <p>Zentron has added support for several new trading pairs, including BTC/GBP, ETH/JPY, and BNB/AUD.</p>
             <div className="newsTimestamp">1 day ago</div>
           </div>
           <div className="newsItem">
-            <h3>Binance Announces Upcoming Mainnet Upgrade</h3>
-            <p>Binance has announced an upcoming mainnet upgrade, which will bring new features and improvements to the platform.</p>
+            <h3>Zentron Announces Upcoming Mainnet Upgrade</h3>
+            <p>Zentron has announced an upcoming mainnet upgrade, which will bring new features and improvements to the platform.</p>
             <div className="newsTimestamp">3 days ago</div>
           </div>
         </div>
@@ -524,7 +524,7 @@ const HomePage = () => {
       {/* Footer Section */}
       <footer className="footer">
         <div className="footerSection">
-          <h3>Binance</h3>
+          <h3>Zentron</h3>
           <ul>
             <li><Link to="/about">About</Link></li>
             <li><Link to="/careers">Careers</Link></li>
@@ -681,7 +681,7 @@ const LoginPage = ({ onLogin }) => {
         </Link>
       </p>
       <div className="footer">
-        <p>© 2025 AIM-Binance. All rights reserved.</p>
+        <p>© 2025 Zentron. All rights reserved.</p>
         <p>
           <a href="#">Terms of Service</a>
           <a href="#">Privacy Policy</a>
@@ -766,7 +766,7 @@ const SupportPage = () => {
       
       {/* Contact Info - No container div */}
       <h3 className="contactHeading">Contact Us</h3>
-      <p className="contactInfo">Email: support@AIM.com</p>
+      <p className="contactInfo">Email: support@Zentron.com</p>
       <p className="contactInfo">Phone: +92 79074707</p>
       <p className="contactInfo">Live Chat: Available 24/7</p>
       
@@ -820,7 +820,7 @@ const SupportPage = () => {
       </form>
       
       <div className="footer">
-        <p>© 2025 AIM-Binance. All rights reserved.</p>
+        <p>© 2025 Zentron. All rights reserved.</p>
         <p>
           <a href="#">Terms of Service</a>
           <a href="#">Privacy Policy</a>
@@ -978,7 +978,7 @@ const ForgotPasswordPage = () => {
       </p>
 
       <div className="footer">
-        <p>© 2025 AIM-Binance. All rights reserved.</p>
+        <p>© 2025 Zentron. All rights reserved.</p>
         <p>
           <a href="#">Terms of Service</a>
           <a href="#">Privacy Policy</a>
@@ -1123,7 +1123,7 @@ const SignupPage = ({ onSignup }) => {
       </p>
       
       <div className="footer">
-        <p>© 2025 AIM-Binance. All rights reserved.</p>
+        <p>© 2025 Zentron. All rights reserved.</p>
         <p>
           <a href="#">Terms of Service</a>
           <a href="#">Privacy Policy</a>
@@ -1231,7 +1231,7 @@ const KYCForm = ({ onKYCSubmit }) => {
       </button>
       {/* Footer */}
       <div className="footer">
-        <p>© 2025 AIM-Binance. All rights reserved.</p>
+        <p>© 2025 Zentron. All rights reserved.</p>
         <p>
           <a href="#">Terms of Service</a>
           <a href="#">Privacy Policy</a>
@@ -1335,7 +1335,7 @@ const AdminLogin = ({ onAdminLogin }) => {
       </p>
           {/* Footer */}
           <div className="footer">
-        <p>© 2025 AIM-Binance. All rights reserved.</p>
+        <p>© 2025 Zentron. All rights reserved.</p>
         <p>
           <a href="#">Terms of Service</a>
           <a href="#">Privacy Policy</a>
@@ -2049,7 +2049,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
 
       {/* Footer */}
       <div className="footer">
-        <p>© 2025 AIM-Binance. All rights reserved.</p>
+        <p>© 2025 Zentron. All rights reserved.</p>
         <p>
           <a href="#">Terms of Service</a>
           <a href="#">Privacy Policy</a>

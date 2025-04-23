@@ -9,7 +9,7 @@ const Header = () => {
         <Link to="/">
           <img src={logo} alt="AIM-Binance Logo" className="logo" />
         </Link>
-        <div className="brandName">AIM-Binance</div>
+        <div className="brandName">Zentron</div>
       </div>
       <nav className="nav">
         <ul className="navList">
