@@ -2135,7 +2135,7 @@ th {
 .forgotPasswordPage .link:hover,
 .kycPage .link:hover,
 .adminLogin .link:hover {
-  color: #f5d742;
+  color: #4E8AFF;
   text-decoration: underline;
 }
 
@@ -2236,7 +2236,7 @@ th {
   max-width: 600px;
   width: 100%;
   padding: 40px;
-  background-color: #00d1ff;
+  background-color: #050F1C;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   margin: 0 auto;

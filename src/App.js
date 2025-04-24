@@ -1,6 +1,7 @@
-
+// App.js
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from "react-router-dom";
+import axios from 'axios';
 import {
   ResponsiveContainer,
   LineChart,
@@ -16,8 +17,8 @@ import {
 } from 'recharts';
 import "./styles.css";
 
-
-
+// Base URL for API
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // Notification Component
 const Notification = ({ message, onClose, type = 'success' }) => {
@@ -28,10 +29,7 @@ const Notification = ({ message, onClose, type = 'success' }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  // Determine notification class based on type
   const notificationClass = type === 'success' ? 'success' : 'error';
-  
-  // Special handling for 2FA notifications
   const is2FANotification = message.includes('2FA');
   const twoFAClass = is2FANotification ? 
     (message.includes('Enabled') ? 'twofa-enabled' : 'twofa-disabled') : '';
@@ -72,41 +70,22 @@ const OtpInput = ({ value, onChange }) => {
 };
 
 // Home Page Component
-import Header from './Header'; 
-import qrCode from './assets/AIM-Binance.png';
-import macosImage from './assets/macos.png'; 
-import linuxImage from './assets/linux.png'; 
-import windowsImage from './assets/windows.png'; 
-import registerImg from './assets/register.png';
-import teamMgmtImg from './assets/team-management.png';
-import walletImg from './assets/wallet.png';
-import collaborativeGrowthIcon from './assets/collaborative-growth.png'; 
-
-// Sample data for charts
-const btcData = [
-  { time: '10:00', price: 58000 },
-  { time: '11:00', price: 48234 },
-  { time: '12:00', price: 38100 },
-  { time: '13:00', price: 28300 },
-  { time: '14:00', price: 58400 },
-];
-
-const ethData = [
-  { time: '10:00', price: 1800 },
-  { time: '11:00', price: 300 },
-  { time: '12:00', price: 1820 },
-  { time: '13:00', price: 740 },
-  { time: '14:00', price: 1850 },
-];
-
-const subscriptionData = [
-  { name: 'Jan', value: 800 },
-  { name: 'Feb', value: 900 },
-  { name: 'Mar', value: 1000 },
-  { name: 'Apr', value: 2100 },
-  { name: 'May', value: 3050 },
-  { name: 'Jun', value: 5400 },
-];
+const Header = () => (
+  <header className="header">
+    <div className="logoContainer">
+      <img src="/logo.png" alt="Zentron Logo" className="logo" />
+      <span className="brandName">Zentron</span>
+    </div>
+    <nav className="nav">
+      <ul className="navList">
+        <li className="navItem"><Link to="/" className="navLink">Home</Link></li>
+        <li className="navItem"><Link to="/login" className="navLink">Login</Link></li>
+        <li className="navItem"><Link to="/signup" className="navLink">Sign Up</Link></li>
+        <li className="navItem"><Link to="/support" className="navLink">Support</Link></li>
+      </ul>
+    </nav>
+  </header>
+);
 
 const HomePage = () => {
   const [userCount, setUserCount] = useState(265603864);
@@ -122,6 +101,31 @@ const HomePage = () => {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const btcData = [
+    { time: '10:00', price: 58000 },
+    { time: '11:00', price: 48234 },
+    { time: '12:00', price: 38100 },
+    { time: '13:00', price: 28300 },
+    { time: '14:00', price: 58400 },
+  ];
+
+  const ethData = [
+    { time: '10:00', price: 1800 },
+    { time: '11:00', price: 300 },
+    { time: '12:00', price: 1820 },
+    { time: '13:00', price: 740 },
+    { time: '14:00', price: 1850 },
+  ];
+
+  const subscriptionData = [
+    { name: 'Jan', value: 800 },
+    { name: 'Feb', value: 900 },
+    { name: 'Mar', value: 1000 },
+    { name: 'Apr', value: 2100 },
+    { name: 'May', value: 3050 },
+    { name: 'Jun', value: 5400 },
+  ];
 
   const faqs = [
     {
@@ -152,107 +156,87 @@ const HomePage = () => {
 
   return (
     <div className="homePage">
-      {/* Header */}
       <Header />
-
       <h3 className="heading">The Future of Trading Starts Here!</h3>
 
-    {/* Getting Started Steps Section */}
-    <div className="stepsContainer">
-      <h2 className="sectionTitle">Get Started in 3 Easy Steps</h2>
-      <div className="stepsGrid">
-        <div className="stepCard">
-          <div className="stepImageContainer">
-            <img 
-              src={registerImg} 
-              alt="Register" 
-              className="stepImage"
-            />
+      {/* Getting Started Steps Section */}
+      <div className="stepsContainer">
+        <h2 className="sectionTitle">Get Started in 3 Easy Steps</h2>
+        <div className="stepsGrid">
+          <div className="stepCard">
+            <div className="stepImageContainer">
+              <img src="/register.png" alt="Register" className="stepImage" />
+            </div>
+            <div className="stepNumber">1</div>
+            <h3 className="stepTitle">Register & Verify Account</h3>
+            <p className="stepDescription">
+              Create your account by registering with your email or phone number. Set a strong password to secure your access to the platform.
+            </p>
           </div>
-          <div className="stepNumber">1</div>
-          <h3 className="stepTitle">Register & Verify Account</h3>
-          <p className="stepDescription">
-          Create your account by registering with your email or phone number. Set a strong password to secure your access to the platform.
-          </p>
-        </div>
-        
-        <div className="stepCard">
-          <div className="stepImageContainer">
-            <img 
-              src={teamMgmtImg} 
-              alt="Questionnaire" 
-              className="stepImage"
-            />
+          
+          <div className="stepCard">
+            <div className="stepImageContainer">
+              <img src="/team-management.png" alt="Questionnaire" className="stepImage" />
+            </div>
+            <div className="stepNumber">2</div>
+            <h3 className="stepTitle">Complete KYC Verification</h3>
+            <p className="stepDescription">
+              Complete identity verification by submitting required documents (like ID proof and selfie) to comply with security regulations and unlock full platform access.
+            </p>
           </div>
-          <div className="stepNumber">2</div>
-          <h3 className="stepTitle">Complete KYC Verification</h3>
-          <p className="stepDescription">
-          Complete identity verification by submitting required documents (like ID proof and selfie) to comply with security regulations and unlock full platform access.
-          </p>
-        </div>
-        
-        <div className="stepCard">
-          <div className="stepImageContainer">
-            <img 
-              src={walletImg} 
-              alt="Deposit" 
-              className="stepImage"
-            />
+          
+          <div className="stepCard">
+            <div className="stepImageContainer">
+              <img src="/wallet.png" alt="Deposit" className="stepImage" />
+            </div>
+            <div className="stepNumber">3</div>
+            <h3 className="stepTitle">Deposit Funds</h3>
+            <p className="stepDescription">
+              Add funds to your Zentron account via a variety of methods and follow two-factor-authentication to secure your account.
+            </p>
           </div>
-          <div className="stepNumber">3</div>
-          <h3 className="stepTitle">Deposit Funds</h3>
-          <p className="stepDescription">
-            Add funds to your Zentron account via a variety of methods and 
-            follow two-factor-authentication to secure your account.
-          </p>
         </div>
       </div>
-    </div>
 
-                 {/* Marketoverview, trending coins */}
-                 <div className="tradeOnTheGo">
+      <div className="tradeOnTheGo">
         <h3 className="tradeOnTheGoText">₿ BTC | ⟠ ETH — Hourly Trends, Infinite Possibilities</h3>
       </div>
 
-                  {/* User Count and Trust Us Text */}
-                  <div className="user-count">
+      <div className="user-count">
         <span>{userCount.toLocaleString()}</span> USERS 
       </div>
       <div className="trust-us">TRUST US</div>
 
-{/* Charts Container */}
-<div className="chartsRow">
-  {/* BTC/USDT Chart */}
-  <div className="chartContainer">
-    <h2 className="chartTitle"> ₿ BTC/USDT Price Trend</h2>
-    <ResponsiveContainer width="100%" height={250}>
-      <LineChart data={btcData}>
-        <XAxis dataKey="time" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="price" stroke="#f7931a" strokeWidth={2} />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
+      {/* Charts Container */}
+      <div className="chartsRow">
+        <div className="chartContainer">
+          <h2 className="chartTitle"> ₿ BTC/USDT Price Trend</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={btcData}>
+              <XAxis dataKey="time" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="price" stroke="#f7931a" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
 
-  {/* ETH/USDT Chart */}
-  <div className="chartContainer">
-    <h2 className="chartTitle"> ⟠ ETH/USDT Price Trend</h2>
-    <ResponsiveContainer width="100%" height={250}>
-      <LineChart data={ethData}>
-        <XAxis dataKey="time" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="price" stroke="#627eea" strokeWidth={2} />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-</div>
+        <div className="chartContainer">
+          <h2 className="chartTitle"> ⟠ ETH/USDT Price Trend</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={ethData}>
+              <XAxis dataKey="time" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="price" stroke="#627eea" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
-                 {/* Marketoverview, trending coins */}
-                 <div className="tradeOnTheGo">
+      <div className="tradeOnTheGo">
         <h3 className="tradeOnTheGoText">Stay Ahead, Trade Smart – Real-Time Crypto Insights</h3>
       </div>
 
@@ -319,29 +303,27 @@ const HomePage = () => {
         </Link>
       </div>
 
-      
-
       <div className="parallelSections">
         {/* Scan to Download App Section */}
         <div className="downloadSection">
           <h2 className="sectionTitle">Scan to Download App</h2>
           <div className="downloadOptions">
             <img 
-              src={qrCode} 
+              src="/qr-code.png" 
               alt="QR Code to Download App"
               className="qrCode"
             />
             <div className="platforms">
               <div className="platformItem">
-                <img src={macosImage} alt="MacOS" className="platformIcon" />
+                <img src="/macos.png" alt="MacOS" className="platformIcon" />
                 <span>MacOS</span>
               </div>
               <div className="platformItem">
-                <img src={windowsImage} alt="Windows" className="platformIcon" />
+                <img src="/windows.png" alt="Windows" className="platformIcon" />
                 <span>Windows</span>
               </div>
               <div className="platformItem">
-                <img src={linuxImage} alt="Linux" className="platformIcon" />
+                <img src="/linux.png" alt="Linux" className="platformIcon" />
                 <span>Linux</span>
               </div>
             </div>
@@ -374,8 +356,7 @@ const HomePage = () => {
         </div>
       </div>
 
-       {/* Trade On The Go Section */}
-       <div className="tradeOnTheGo">
+      <div className="tradeOnTheGo">
         <h3 className="tradeOnTheGoText">Trade on the go. Anywhere, anytime.</h3>
       </div>
 
@@ -419,21 +400,16 @@ const HomePage = () => {
         </div>
       </div>
 
-             {/* Saty informed Section */}
-             <div className="tradeOnTheGo">
+      <div className="tradeOnTheGo">
         <h3 className="tradeOnTheGoText">Breaking Stories, Timely Updates – Stay Informed.</h3>
       </div>
 
-            {/* News & Updates Section */}
+      {/* News & Updates Section */}
       <div className="newsContainer">
-      <div className="sectionTitle">
-    <img 
-      src={require('./assets/news-icon.png')} 
-      alt="News" 
-      className="sectionTitleIcon" 
-    />
-    News & Updates
-  </div>
+        <div className="sectionTitle">
+          <img src="/news-icon.png" alt="News" className="sectionTitleIcon" />
+          News & Updates
+        </div>
         <div className="newsGrid">
           <div className="newsItem">
             <h3>Zentron Launches New Staking Feature</h3>
@@ -453,53 +429,50 @@ const HomePage = () => {
         </div>
       </div>
 
-{/* Member Growth Section */}  
-<div className="memberGrowthContainer">
-  <div className="sectionTitleContainer">
-    <img 
-      src={collaborativeGrowthIcon} 
-      alt="Member Growth" 
-      className="growthIcon"
-    />
-    <h2 className="sectionTitle">Member Growth</h2>
-  </div>
-  <div className="growthStats">
-    <div className="growthNumber">+2350</div>
-    <div className="growthRate">+180.1% from last month</div>
-  </div>
-  <div className="growthChart">
-    <ResponsiveContainer width="100%" height={200}>
-      <BarChart data={subscriptionData}>
-        <XAxis 
-          dataKey="name" 
-          axisLine={false}
-          tickLine={false}
-          tick={{ fill: '#ffffff', fontSize: 12 }}
-        />
-        <YAxis hide={true} />
-        <Bar 
-          dataKey="value" 
-          radius={[4, 4, 0, 0]}
-          animationDuration={2000}
-        >
-          {subscriptionData.map((entry, index) => (
-            <Cell 
-              key={`cell-${index}`} 
-              fill={index === subscriptionData.length - 1 ? '#f5d742' : 'rgba(255, 255, 255, 0.9)'} 
-            />
-          ))}
-          <LabelList 
-            dataKey="value" 
-            position="top" 
-            fill="#ffffff"
-            fontSize={12}
-            fontWeight="bold"
-          />
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-</div>
+      {/* Member Growth Section */}  
+      <div className="memberGrowthContainer">
+        <div className="sectionTitleContainer">
+          <img src="/collaborative-growth.png" alt="Member Growth" className="growthIcon" />
+          <h2 className="sectionTitle">Member Growth</h2>
+        </div>
+        <div className="growthStats">
+          <div className="growthNumber">+2350</div>
+          <div className="growthRate">+180.1% from last month</div>
+        </div>
+        <div className="growthChart">
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={subscriptionData}>
+              <XAxis 
+                dataKey="name" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#ffffff', fontSize: 12 }}
+              />
+              <YAxis hide={true} />
+              <Bar 
+                dataKey="value" 
+                radius={[4, 4, 0, 0]}
+                animationDuration={2000}
+              >
+                {subscriptionData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={index === subscriptionData.length - 1 ? '#f5d742' : 'rgba(255, 255, 255, 0.9)'} 
+                  />
+                ))}
+                <LabelList 
+                  dataKey="value" 
+                  position="top" 
+                  fill="#ffffff"
+                  fontSize={12}
+                  fontWeight="bold"
+                />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
       {/* FAQ Section */}
       <div className="faqContainer">
         <h2 className="sectionTitle">Frequently Asked Questions</h2>
@@ -518,8 +491,6 @@ const HomePage = () => {
           </div>
         ))}
       </div>
-
-
 
       {/* Footer Section */}
       <footer className="footer">
@@ -573,61 +544,89 @@ const HomePage = () => {
   );
 };
 
-//login page comp
+// Login Page Component
 const LoginPage = ({ onLogin }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fingerprint] = useState("3f6b5d7e9a0c1b2d8e4f6a3b7c9d5e0g");
+  const [latitude] = useState("10");
+  const [longitude] = useState("20");
   const [error, setError] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtpField, setShowOtpField] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [otpToken, setOtpToken] = useState("");
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [notification, setNotification] = useState(null);
 
-  const handleLogin = () => {
-    if (!username || !password) {
+  const handleLogin = async () => {
+    if (!email || !password) {
       setError("Please fill in all fields.");
       return;
     }
 
-    if (!username.includes('@')) {
-      setError("Username must contain an '@' symbol.");
+    if (!email.includes('@') || !email.includes('.com')) {
+      setError("Please enter a valid email address.");
       return;
     }
 
-    if (username.endsWith('@')) {
-      setError("Username cannot end with '@' symbol.");
-      return;
-    }
+    try {
+      const response = await axios.post(`${API_BASE_URL}/login/login`, {
+        email,
+        password,
+        fingerprint,
+        latitude,
+        longitude
+      });
 
-    if (!username.toLowerCase().includes('.com')) {
-      setError("Username must include '.com'");
-      return;
+      if (response.data.message === "OTP sent. Please verify to complete login.") {
+        setShowOtpField(true);
+        setOtpToken(response.data.otpToken);
+        setSuccessMessage(response.data.message);
+        setIs2FAEnabled(true);
+      } else {
+        localStorage.setItem('token', response.data.token);
+        setSuccessMessage(response.data.message);
+        setTimeout(() => {
+          onLogin();
+        }, 2000);
+      }
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed. Please try again.");
     }
-
-    setShowOtpField(true);
-    setSuccessMessage("An OTP has been sent to your email.");
   };
 
-  const handleOtpVerification = () => {
+  const handleOtpVerification = async () => {
     if (otp.length !== 4 || isNaN(otp)) {
       setError("OTP must be a 4-digit number.");
       return;
     }
 
-    setSuccessMessage("OTP Verified! Logging you in...");
-    setTimeout(() => {
-      onLogin();
-      setUsername("");
-      setPassword("");
-      setOtp("");
-      setShowOtpField(false);
-    }, 2000);
+    try {
+      const response = await axios.post(`${API_BASE_URL}/login/verify-2fa`, {
+        otp,
+        otpToken,
+        fingerprint,
+        latitude,
+        longitude
+      });
+
+      localStorage.setItem('token', response.data.token);
+      setSuccessMessage(response.data.message);
+      setTimeout(() => {
+        onLogin();
+      }, 2000);
+    } catch (err) {
+      setError(err.response?.data?.message || "OTP verification failed.");
+    }
   };
 
   useEffect(() => {
-    if (username.includes('@') && !username.endsWith('@') && username.toLowerCase().includes('.com')) {
+    if (email.includes('@') && email.includes('.com')) {
       setError("");
     }
-  }, [username]);
+  }, [email]);
 
   return (
     <div className="loginPage">
@@ -635,14 +634,21 @@ const LoginPage = ({ onLogin }) => {
       <p>Enter your email and password to login to your account.</p>
       {error && <div className="error">{error}</div>}
       {successMessage && <div className="success">{successMessage}</div>}
+      {notification && (
+        <Notification 
+          message={notification.message} 
+          onClose={() => setNotification(null)} 
+          type={notification.type}
+        />
+      )}
       
       {!showOtpField && (
         <>
           <input
             type="text"
             placeholder="Email (must contain @ and .com)"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="input"
           />
           <input
@@ -665,7 +671,8 @@ const LoginPage = ({ onLogin }) => {
       <button
         onClick={showOtpField ? handleOtpVerification : handleLogin}
         className="button"
-        disabled={showOtpField ? otp.length !== 4 : !username || !password}>
+        disabled={showOtpField ? otp.length !== 4 : !email || !password}
+      >
         {showOtpField ? "Verify OTP" : "Login"}
       </button>
       
@@ -691,7 +698,8 @@ const LoginPage = ({ onLogin }) => {
     </div>
   );
 };
-//Support page 
+
+// Support Page Component
 const SupportPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -764,20 +772,20 @@ const SupportPage = () => {
       <h2 className="heading">📞Customer Support</h2>
       <p>We're here to help you with any issues or questions you may have.</p>
       
-      {/* Contact Info - No container div */}
       <h3 className="contactHeading">Contact Us</h3>
       <p className="contactInfo">Email: support@Zentron.com</p>
       <p className="contactInfo">Phone: +92 79074707</p>
       <p className="contactInfo">Live Chat: Available 24/7</p>
       
-      {/* Form - No wrapper div */}
       <form onSubmit={handleSubmit} className="supportForm">
         <h3 className="formHeading">Send us a message</h3>
         
         {notification && (
-          <div className={notification.type === 'success' ? 'success' : 'error'}>
-            {notification.message}
-          </div>
+          <Notification 
+            message={notification.message} 
+            onClose={() => setNotification(null)} 
+            type={notification.type}
+          />
         )}
         
         <input
@@ -831,6 +839,7 @@ const SupportPage = () => {
   );
 };
 
+// Forgot Password Page Component
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -841,62 +850,70 @@ const ForgotPasswordPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = () => {
+  const handleSendOtp = async () => {
     if (!email) {
       setError("Please enter your email.");
       return;
     }
 
-    if (!email.includes('@')) {
-      setError("Email must contain an '@' symbol.");
+    if (!email.includes('@') || !email.includes('.com')) {
+      setError("Please enter a valid email address.");
       return;
     }
 
-    if (email.endsWith('@')) {
-      setError("Email cannot end with '@' symbol.");
-      return;
+    try {
+      await axios.post(`${API_BASE_URL}/auth/sendPwdOtp`, { email });
+      setShowOtpField(true);
+      setSuccess("A recovery OTP has been sent to your email.");
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send OTP. Please try again.");
     }
-
-    if (!email.toLowerCase().includes('.com')) {
-      setError("Email must include '.com'");
-      return;
-    }
-
-    setShowOtpField(true);
-    setSuccess("A recovery OTP has been sent to your email.");
-    setError("");
   };
 
-  const handleOtpVerification = () => {
+  const handleOtpVerification = async () => {
     if (otp.length !== 4 || isNaN(otp)) {
       setError("OTP must be a 4-digit number.");
       return;
     }
 
-    setIsOtpVerified(true);
-    setSuccess("OTP verified. Please enter your new password.");
-    setError("");
+    try {
+      await axios.post(`${API_BASE_URL}/auth/verifyPwdOtp`, { email, otp });
+      setIsOtpVerified(true);
+      setSuccess("OTP verified. Please enter your new password.");
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid OTP. Please try again.");
+    }
   };
 
-  const handlePasswordReset = () => {
+  const handlePasswordReset = async () => {
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    setSuccess("Password reset successfully.");
-    setError("");
-    setEmail("");
-    setOtp("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setShowOtpField(false);
-    setIsOtpVerified(false);
+    try {
+      await axios.post(`${API_BASE_URL}/auth/resetPwd`, { 
+        email, 
+        otp, 
+        newPassword 
+      });
+      setSuccess("Password reset successfully.");
+      setError("");
+      setEmail("");
+      setOtp("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setShowOtpField(false);
+      setIsOtpVerified(false);
+    } catch (err) {
+      setError(err.response?.data?.message || "Password reset failed. Please try again.");
+    }
   };
 
-  // Clear error when email is updated and valid
   useEffect(() => {
-    if (email.includes('@') && !email.endsWith('@') && email.toLowerCase().includes('.com')) {
+    if (email.includes('@') && email.includes('.com')) {
       setError("");
     }
   }, [email]);
@@ -908,7 +925,6 @@ const ForgotPasswordPage = () => {
       {error && <div className="error">{error}</div>}
       {success && <div className="success">{success}</div>}
       
-      {/* Email field - only shown in first step */}
       {!showOtpField && !isOtpVerified && (
         <input
           type="text"
@@ -919,7 +935,6 @@ const ForgotPasswordPage = () => {
         />
       )}
 
-      {/* OTP field - shown after email submission */}
       {showOtpField && !isOtpVerified && (
         <>
           <p>Enter OTP:</p>
@@ -927,7 +942,6 @@ const ForgotPasswordPage = () => {
         </>
       )}
 
-      {/* Password fields - shown after OTP verification */}
       {isOtpVerified && (
         <>
           <input
@@ -953,7 +967,7 @@ const ForgotPasswordPage = () => {
             ? handlePasswordReset
             : showOtpField
             ? handleOtpVerification
-            : handleSubmit
+            : handleSendOtp
         }
         className="button"
         disabled={
@@ -989,6 +1003,7 @@ const ForgotPasswordPage = () => {
   );
 };
 
+// Signup Page Component
 const SignupPage = ({ onSignup }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -998,24 +1013,14 @@ const SignupPage = ({ onSignup }) => {
   const [showOtpField, setShowOtpField] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!email || !password || !phone) {
       setError("Please fill in all fields.");
       return;
     }
 
-    if (!email.includes('@')) {
-      setError("Email must contain an '@' symbol.");
-      return;
-    }
-
-    if (email.endsWith('@')) {
-      setError("Email cannot end with '@' symbol.");
-      return;
-    }
-
-    if (!email.toLowerCase().includes('.com')) {
-      setError("Email must include '.com'");
+    if (!email.includes('@') || !email.includes('.com')) {
+      setError("Please enter a valid email address.");
       return;
     }
 
@@ -1025,47 +1030,48 @@ const SignupPage = ({ onSignup }) => {
       return;
     }
 
-    // Show OTP field and set success message
-    setShowOtpField(true);
-    setSuccessMessage("A verification OTP has been sent to your email.");
+    try {
+      await axios.post(`${API_BASE_URL}/auth/signUp`, {
+        email,
+        password,
+        phone
+      });
+      setShowOtpField(true);
+      setSuccessMessage("A verification OTP has been sent to your email.");
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Signup failed. Please try again.");
+    }
   };
 
-  const handleOtpVerification = () => {
+  const handleOtpVerification = async () => {
     if (otp.length !== 4 || isNaN(otp)) {
       setError("OTP must be a 4-digit number.");
       return;
     }
 
-    setSuccessMessage("OTP Verified! Account created successfully.");
-    setTimeout(() => {
-      onSignup({ email, password, phone });
-      setEmail("");
-      setPassword("");
-      setPhone("");
-      setOtp("");
-      setShowOtpField(false);
-    }, 2000);
+    try {
+      const response = await axios.post(`${API_BASE_URL}/auth/verifySignupOtp`, { 
+        email, 
+        otp 
+      });
+      setSuccessMessage("Account created successfully!");
+      setTimeout(() => {
+        onSignup({ email, password, phone });
+      }, 2000);
+    } catch (err) {
+      setError(err.response?.data?.message || "OTP verification failed.");
+    }
   };
 
-  // Clear error when email or phone is updated and meets the requirements
   useEffect(() => {
-    if (email.includes('@') && !email.endsWith('@') && email.toLowerCase().includes('.com')) {
-      setError((prevError) =>
-        prevError === "Email must contain an '@' symbol." || 
-        prevError === "Email cannot end with '@' symbol." ||
-        prevError === "Email must include '.com'"
-          ? "" 
-          : prevError
-      );
+    if (email.includes('@') && email.includes('.com')) {
+      setError("");
     }
 
     const phoneRegex = /^\+92[\s\-]?\(?(\d{3})\)?[\s\-]?\d{7}$/;
     if (phoneRegex.test(phone)) {
-      setError((prevError) =>
-        prevError === "Invalid phone number. Please use the format +92XXXXXXXXX, +92 (XXX) XXXXXXX, +92-XXX-XXXXXXX, or +92 XXX XXXXXXX."
-          ? ""
-          : prevError
-      );
+      setError("");
     }
   }, [email, phone]);
 
@@ -1134,54 +1140,45 @@ const SignupPage = ({ onSignup }) => {
   );
 };
 
-//KYC Form component
+// KYC Form Component
 const KYCForm = ({ onKYCSubmit }) => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [documentType, setDocumentType] = useState("passport");
   const [picture, setPicture] = useState(null);
   const [error, setError] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const handleSubmit = () => {
-    // Check if any field is empty
     if (!name || !phoneNumber || !documentType || !picture) {
       setError("Must fill every field before submitting.");
       return;
     }
 
-    // Validate phone number format
     const phoneRegex = /^\+92[\s\-]?\(?(\d{3})\)?[\s\-]?\d{7}$/;
     if (!phoneRegex.test(phoneNumber)) {
       setError("Invalid phone number. Please use the format +92XXXXXXXXX, +92 (XXX) XXXXXXX, +92-XXX-XXXXXXX, or +92 XXX XXXXXXX.");
       return;
     }
 
-    // If all validations pass, submit the form
-    console.log("Submitting KYC with:", {
-      name,
-      phoneNumber,
-      documentType,
-      picture,
+    setNotification({
+      type: 'success',
+      message: 'KYC submitted successfully!'
     });
+
     onKYCSubmit();
 
-    // Clear fields after successful submission
     setName("");
     setPhoneNumber("");
     setDocumentType("passport");
     setPicture(null);
-    setError(""); // Clear any previous errors
+    setError("");
   };
 
-  // Clear error when phone number is updated and meets the requirements
   useEffect(() => {
     const phoneRegex = /^\+92[\s\-]?\(?(\d{3})\)?[\s\-]?\d{7}$/;
     if (phoneRegex.test(phoneNumber)) {
-      setError((prevError) =>
-        prevError === "Invalid phone number. Please use the format +92XXXXXXXXX, +92 (XXX) XXXXXXX, +92-XXX-XXXXXXX, or +92 XXX XXXXXXX."
-          ? ""
-          : prevError
-      );
+      setError("");
     }
   }, [phoneNumber]);
 
@@ -1193,6 +1190,13 @@ const KYCForm = ({ onKYCSubmit }) => {
         KYC verification
       </p>
       {error && <div className="error">{error}</div>}
+      {notification && (
+        <Notification 
+          message={notification.message} 
+          onClose={() => setNotification(null)} 
+          type={notification.type}
+        />
+      )}
       <input
         type="text"
         placeholder="Full Name"
@@ -1229,7 +1233,6 @@ const KYCForm = ({ onKYCSubmit }) => {
       >
         Submit
       </button>
-      {/* Footer */}
       <div className="footer">
         <p>© 2025 Zentron. All rights reserved.</p>
         <p>
@@ -1244,9 +1247,66 @@ const KYCForm = ({ onKYCSubmit }) => {
 
 // Admin Panel Component
 const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
+  const [notification, setNotification] = useState(null);
+
+  const handleApprove = async (index) => {
+    try {
+      const request = kycRequests[index];
+      await axios.post(`${API_BASE_URL}/admin/approveKyc`, { 
+        userId: request.userId 
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      onApprove(index);
+      setNotification({
+        type: 'success',
+        message: 'KYC approved successfully!'
+      });
+    } catch (err) {
+      setNotification({
+        type: 'error',
+        message: err.response?.data?.message || 'Failed to approve KYC'
+      });
+    }
+  };
+
+  const handleReject = async (index) => {
+    try {
+      const request = kycRequests[index];
+      await axios.post(`${API_BASE_URL}/admin/rejectKyc`, { 
+        userId: request.userId 
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      onReject(index);
+      setNotification({
+        type: 'success',
+        message: 'KYC rejected successfully!'
+      });
+    } catch (err) {
+      setNotification({
+        type: 'error',
+        message: err.response?.data?.message || 'Failed to reject KYC'
+      });
+    }
+  };
+
   return (
     <div className="adminPanel">
       <h2 className="heading">Admin Panel - KYC Requests</h2>
+      {notification && (
+        <Notification 
+          message={notification.message} 
+          onClose={() => setNotification(null)} 
+          type={notification.type}
+        />
+      )}
       <table>
         <thead>
           <tr>
@@ -1265,10 +1325,10 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
               <td>{request.documentType}</td>
               <td>{request.status}</td>
               <td>
-                <button onClick={() => onApprove(index)} className="button">
+                <button onClick={() => handleApprove(index)} className="button">
                   Approve
                 </button>
-                <button onClick={() => onReject(index)} className="button">
+                <button onClick={() => handleReject(index)} className="button">
                   Reject
                 </button>
               </td>
@@ -1285,19 +1345,33 @@ const AdminLogin = ({ onAdminLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [notification, setNotification] = useState(null);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!username || !password) {
       setError("Please fill in all fields.");
       return;
     }
-    if (username === "admin" && password === "admin123") {
-      onAdminLogin();
-      // Clear fields after successful login
-      setUsername("");
-      setPassword("");
-    } else {
-      setError("Invalid credentials.");
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/admin/login`, { 
+        username, 
+        password 
+      });
+      
+      localStorage.setItem('adminToken', response.data.token);
+      setNotification({
+        type: 'success',
+        message: 'Admin login successful!'
+      });
+      
+      setTimeout(() => {
+        onAdminLogin();
+        setUsername("");
+        setPassword("");
+      }, 2000);
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid credentials.");
     }
   };
 
@@ -1307,6 +1381,13 @@ const AdminLogin = ({ onAdminLogin }) => {
       <h5>Restricted Access – Authorized Personnel Only</h5>
       <p>Enter Your Admin Credentials to Proceed</p>
       {error && <div className="error">{error}</div>}
+      {notification && (
+        <Notification 
+          message={notification.message} 
+          onClose={() => setNotification(null)} 
+          type={notification.type}
+        />
+      )}
       <input
         type="text"
         placeholder="Username"
@@ -1333,8 +1414,7 @@ const AdminLogin = ({ onAdminLogin }) => {
           Back to Home
         </Link>
       </p>
-          {/* Footer */}
-          <div className="footer">
+      <div className="footer">
         <p>© 2025 Zentron. All rights reserved.</p>
         <p>
           <a href="#">Terms of Service</a>
@@ -1345,7 +1425,6 @@ const AdminLogin = ({ onAdminLogin }) => {
     </div>
   );
 };
-
 
 // Session Expired Modal Component
 const SessionExpiredModal = ({ onClose }) => {
@@ -1364,17 +1443,13 @@ const SessionExpiredModal = ({ onClose }) => {
 
 // Dashboard Component
 const Dashboard = ({ user, kycStatus, accountStatus }) => {
-  // State for dashboard tabs (Transfer, Total, History, etc.)
   const [dashboardTab, setDashboardTab] = useState("transfer");
-  
-  // State for Hot Cryptos tabs (Popular, New Listing)
   const [hotCryptosTab, setHotCryptosTab] = useState("popular");
-  
   const [walletId, setWalletId] = useState("");
   const [receiverWalletId, setReceiverWalletId] = useState("");
   const [amount, setAmount] = useState("");
-  const [totalCoins, setTotalCoins] = useState(1000); // Total ETH balance
-  const [notification, setNotification] = useState("");
+  const [totalCoins, setTotalCoins] = useState(1000);
+  const [notification, setNotification] = useState(null);
   const [transactionHistory, setTransactionHistory] = useState([]);
   const [conversionType, setConversionType] = useState("coinToUsd");
   const [conversionAmount, setConversionAmount] = useState("");
@@ -1383,36 +1458,32 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
   const [depositBankAccount, setDepositBankAccount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawBankAccount, setWithdrawBankAccount] = useState("");
-  const [is2FAEnabled, setIs2FAEnabled] = useState(false); // 2FA state
-  const [showSettings, setShowSettings] = useState(false); // Settings menu visibility
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [isSessionExpired, setIsSessionExpired] = useState(false);
   const [lastActivityTime, setLastActivityTime] = useState(Date.now());
 
-  const ETH_TO_USD_RATE = 2000; // Fixed conversion rate: 1 ETH = $2000
+  const ETH_TO_USD_RATE = 2000;
 
-  // Track user activity
   const updateLastActivityTime = () => {
     setLastActivityTime(Date.now());
   };
 
-  // Check for idle time
   useEffect(() => {
     const checkIdleTime = () => {
       const currentTime = Date.now();
       const idleTime = currentTime - lastActivityTime;
       
-      // Show session expired modal after 30 seconds of inactivity
       if (idleTime > 30000 && !isSessionExpired) {
         setIsSessionExpired(true);
       }
     };
 
-    const activityInterval = setInterval(checkIdleTime, 1000); // Check every second
+    const activityInterval = setInterval(checkIdleTime, 1000);
 
     return () => clearInterval(activityInterval);
   }, [lastActivityTime, isSessionExpired]);
 
-  // Reset timer on any user activity
   useEffect(() => {
     const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
     
@@ -1431,7 +1502,6 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
     };
   }, []);
 
-  // Handle session expired modal close
   const handleSessionExpiredClose = () => {
     setIsSessionExpired(false);
     window.location.href = '/login';
@@ -1495,11 +1565,9 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
       return;
     }
 
-    // Convert USD to ETH
     const ethAmount = usdAmount / ETH_TO_USD_RATE;
     setTotalCoins(totalCoins + ethAmount);
 
-    // Add deposit transaction to history
     const newTransaction = {
       id: transactionHistory.length + 1,
       from: "Bank Account",
@@ -1529,11 +1597,9 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
       return;
     }
 
-    // Convert ETH to USD
     const usdAmount = ethAmount * ETH_TO_USD_RATE;
     setTotalCoins(totalCoins - ethAmount);
 
-    // Add withdrawal transaction to history
     const newTransaction = {
       id: transactionHistory.length + 1,
       from: "ETH Wallet",
@@ -1550,16 +1616,31 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
     setWithdrawBankAccount("");
   };
 
-  const toggle2FA = () => {
+  const toggle2FA = async () => {
     updateLastActivityTime();
     const new2FAStatus = !is2FAEnabled;
-    setIs2FAEnabled(new2FAStatus);
-    setShowSettings(false); 
-  
-    if (new2FAStatus) {
-      setNotification("2FA Enabled");
-    } else {
-      setNotification("2FA Disabled");
+    
+    try {
+      if (new2FAStatus) {
+        await axios.post(`${API_BASE_URL}/login/verify-2fa`, {}, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setNotification("2FA Enabled Successfully");
+      } else {
+        await axios.delete(`${API_BASE_URL}/auth/disable2FA`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setNotification("2FA Disabled Successfully");
+      }
+      
+      setIs2FAEnabled(new2FAStatus);
+      setShowSettings(false);
+    } catch (err) {
+      setNotification(err.response?.data?.message || "Failed to update 2FA settings");
     }
   };
 
@@ -1567,50 +1648,35 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
     <div className="dashboard" onClick={updateLastActivityTime}>
       <h2 className="heading"> User Dashboard</h2>
 
-      {/* Session Expired Modal */}
       {isSessionExpired && <SessionExpiredModal onClose={handleSessionExpiredClose} />}
 
-      {/* How to Buy Crypto Section */}
       <h2 className="buyCryptoTitle">How to Buy/Sell Crypto</h2>
       <div className="buyCryptoSteps">
         <div className="buyCryptoStep">
-          <img 
-            src={require('./assets/s1.png')} 
-            alt="Enter Amount & Select Payment"
-            className="stepImage"
-          />
+          <img src="/s1.png" alt="Enter Amount & Select Payment" className="stepImage" />
           <h3 className="stepTitle">1. Enter Amount & Select Payment</h3>
           <p className="stepDescription">
-          Choose the amount and select a payment method (for buying) or a receiving account (for selling).
+            Choose the amount and select a payment method (for buying) or a receiving account (for selling).
           </p>
         </div>
         
         <div className="buyCryptoStep">
-          <img 
-            src={require('./assets/s2.png')} 
-            alt="Confirm Order"
-            className="stepImage"
-          />
+          <img src="/s2.png" alt="Confirm Order" className="stepImage" />
           <h3 className="stepTitle">2. Confirm Order</h3>
           <p className="stepDescription">
-          Review transaction details, including exchange rates, fees, and other relevant information.
+            Review transaction details, including exchange rates, fees, and other relevant information.
           </p>
         </div>
         
         <div className="buyCryptoStep">
-          <img 
-            src={require('./assets/s3.png')} 
-            alt="Receive Crypto"
-            className="stepImage"
-          />
+          <img src="/s3.png" alt="Receive Crypto" className="stepImage" />
           <h3 className="stepTitle">3. Complete Transaction</h3>
           <p className="stepDescription">
-          Receive crypto in your wallet (for buying) or cash in your payment account (for selling).
+            Receive crypto in your wallet (for buying) or cash in your payment account (for selling).
           </p>
         </div>
       </div>
 
-      {/* Hot Cryptos Section */}
       <div className="hotCryptosContainer">
         <div className="hotCryptosHeader">
           <h2 className="hotCryptosTitle">Hot Cryptos</h2>
@@ -1640,7 +1706,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           <div className="hotCryptosList">
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/bnb-logo.png')} alt="BNB" className="cryptoLogo" />
+                <img src="/bnb-logo.png" alt="BNB" className="cryptoLogo" />
                 BNB
               </span>
               <span className="cryptoPrice">лв1,148.33</span>
@@ -1648,7 +1714,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             </div>
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/btc-logo.png')} alt="BTC" className="cryptoLogo" />
+                <img src="/btc-logo.png" alt="BTC" className="cryptoLogo" />
                 BTC
               </span>
               <span className="cryptoPrice">лв155,138.40</span>
@@ -1656,7 +1722,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             </div>
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/eth-logo.png')} alt="ETH" className="cryptoLogo" />
+                <img src="/eth-logo.png" alt="ETH" className="cryptoLogo" />
                 ETH
               </span>
               <span className="cryptoPrice">лв3,436.51</span>
@@ -1664,7 +1730,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             </div>
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/parti-logo.png')} alt="PARTI" className="cryptoLogo" />
+                <img src="/parti-logo.png" alt="PARTI" className="cryptoLogo" />
                 PARTI
               </span>
               <span className="cryptoPrice">лв0.574938</span>
@@ -1672,7 +1738,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             </div>
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/sol-logo.png')} alt="SOL" className="cryptoLogo" />
+                <img src="/sol-logo.png" alt="SOL" className="cryptoLogo" />
                 SOL
               </span>
               <span className="cryptoPrice">лв239.46</span>
@@ -1685,7 +1751,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           <div className="hotCryptosList">
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/banana-logo.png')} alt="BANANAS" className="cryptoLogo" />
+                <img src="/banana-logo.png" alt="BANANAS" className="cryptoLogo" />
                 BANANAS31
               </span>
               <span className="cryptoPrice">лв0.00967964</span>
@@ -1693,7 +1759,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             </div>
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/broccoli-logo.png')} alt="BROCCOLI" className="cryptoLogo" />
+                <img src="/broccoli-logo.png" alt="BROCCOLI" className="cryptoLogo" />
                 BROCCOLI714
               </span>
               <span className="cryptoPrice">лв0.0540052</span>
@@ -1701,7 +1767,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             </div>
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/tut-logo.png')} alt="TUT" className="cryptoLogo" />
+                <img src="/tut-logo.png" alt="TUT" className="cryptoLogo" />
                 TUT
               </span>
               <span className="cryptoPrice">лв0.045212</span>
@@ -1709,7 +1775,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             </div>
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/nil-logo.png')} alt="NIL" className="cryptoLogo" />
+                <img src="/nil-logo.png" alt="NIL" className="cryptoLogo" />
                 NIL
               </span>
               <span className="cryptoPrice">лв0.78498</span>
@@ -1717,7 +1783,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             </div>
             <div className="cryptoItem">
               <span className="cryptoName">
-                <img src={require('./assets/xusd-logo.png')} alt="XUSD" className="cryptoLogo" />
+                <img src="/xusd-logo.png" alt="XUSD" className="cryptoLogo" />
                 XUSD
               </span>
               <span className="cryptoPrice">лв1.78</span>
@@ -1736,8 +1802,8 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
       {notification && (
         <Notification
           message={notification}
-          onClose={() => setNotification("")}
-          color={is2FAEnabled ? "green" : "red"} 
+          onClose={() => setNotification(null)}
+          type={is2FAEnabled ? "success" : "error"}
         />
       )}
       
@@ -1749,11 +1815,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           }}
           className={dashboardTab === "transfer" ? "activeTab" : "tab"}
         >
-          <img 
-            src={require('./assets/transfer-icon.png')} 
-            alt="Transfer" 
-            className="tabIcon" 
-          />
+          <img src="/transfer-icon.png" alt="Transfer" className="tabIcon" />
           Transfer ETH
         </button>
         <button
@@ -1763,11 +1825,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           }}
           className={dashboardTab === "total" ? "activeTab" : "tab"}
         >
-          <img 
-            src={require('./assets/e-wallet.png')} 
-            alt="Total" 
-            className="tabIcon" 
-          />
+          <img src="/e-wallet.png" alt="Total" className="tabIcon" />
           Total ETH
         </button>
         <button
@@ -1777,11 +1835,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           }}
           className={dashboardTab === "history" ? "activeTab" : "tab"}
         >
-          <img 
-            src={require('./assets/history-icon.png')} 
-            alt="History" 
-            className="tabIcon" 
-          />
+          <img src="/history-icon.png" alt="History" className="tabIcon" />
           Transaction History
         </button>
         <button
@@ -1791,11 +1845,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           }}
           className={dashboardTab === "conversion" ? "activeTab" : "tab"}
         >
-          <img 
-            src={require('./assets/conversion-icon.png')} 
-            alt="Conversion" 
-            className="tabIcon" 
-          />
+          <img src="/conversion-icon.png" alt="Conversion" className="tabIcon" />
           ETH Conversion
         </button>
         <button
@@ -1805,11 +1855,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           }}
           className={dashboardTab === "deposit" ? "activeTab" : "tab"}
         >
-          <img 
-            src={require('./assets/deposit-icon.png')} 
-            alt="Deposit" 
-            className="tabIcon" 
-          />
+          <img src="/deposit-icon.png" alt="Deposit" className="tabIcon" />
           Deposit
         </button>
         <button
@@ -1819,11 +1865,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           }}
           className={dashboardTab === "withdraw" ? "activeTab" : "tab"}
         >
-          <img 
-            src={require('./assets/withdraw-icon.png')} 
-            alt="Withdraw" 
-            className="tabIcon" 
-          />
+          <img src="/withdraw-icon.png" alt="Withdraw" className="tabIcon" />
           Withdraw
         </button>
       </div>
@@ -2047,7 +2089,6 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         )}
       </div>
 
-      {/* Footer */}
       <div className="footer">
         <p>© 2025 Zentron. All rights reserved.</p>
         <p>
@@ -2069,24 +2110,45 @@ const App = () => {
   const [kycRequests, setKycRequests] = useState([]);
   const [kycStatus, setKycStatus] = useState("Pending");
   const [accountStatus, setAccountStatus] = useState("active");
+  const [notification, setNotification] = useState(null);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
+    setNotification({
+      type: 'success',
+      message: 'Login successful!'
+    });
   };
 
   const handleAdminLogin = () => {
     setIsAdminLoggedIn(true);
+    setNotification({
+      type: 'success',
+      message: 'Admin login successful!'
+    });
   };
 
   const handleSignup = (userData) => {
-    console.log("User signed up:", userData);
     setUser(userData);
     setIsLoggedIn(true);
+    setNotification({
+      type: 'success',
+      message: 'Account created successfully!'
+    });
   };
 
   const handleKYCSubmit = (kycData) => {
-    setKycRequests([...kycRequests, { ...kycData, status: "Pending" }]);
+    const newRequest = { 
+      ...kycData, 
+      status: "Pending",
+      userId: Math.floor(Math.random() * 1000) // Mock user ID
+    };
+    setKycRequests([...kycRequests, newRequest]);
     setIsKYCSubmitted(true);
+    setNotification({
+      type: 'success',
+      message: 'KYC submitted successfully!'
+    });
   };
 
   const handleApprove = (index) => {
@@ -2094,6 +2156,10 @@ const App = () => {
     updatedRequests[index].status = "Approved";
     setKycRequests(updatedRequests);
     setKycStatus("Approved");
+    setNotification({
+      type: 'success',
+      message: 'KYC approved successfully!'
+    });
   };
 
   const handleReject = (index) => {
@@ -2101,11 +2167,22 @@ const App = () => {
     updatedRequests[index].status = "Rejected";
     setKycRequests(updatedRequests);
     setKycStatus("Rejected");
+    setNotification({
+      type: 'success',
+      message: 'KYC rejected successfully!'
+    });
   };
 
   return (
     <Router>
       <div className="app">
+        {notification && (
+          <Notification 
+            message={notification.message} 
+            onClose={() => setNotification(null)} 
+            type={notification.type}
+          />
+        )}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={isLoggedIn ? <Navigate to="/kyc" /> : <LoginPage onLogin={handleLogin} />} />
