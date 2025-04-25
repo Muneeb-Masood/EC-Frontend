@@ -1885,16 +1885,40 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
     setWithdrawBankAccount("");
   };
 
-  const toggle2FA = () => {
+  const toggle2FA = async () => {
     updateLastActivityTime();
     const new2FAStatus = !is2FAEnabled;
-    setIs2FAEnabled(new2FAStatus);
-    setShowSettings(false); 
-  
-    if (new2FAStatus) {
-      setNotification("2FA Enabled");
-    } else {
-      setNotification("2FA Disabled");
+    
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (new2FAStatus) {
+        // Enable 2FA
+        await axios.post(
+          `${API_BASE_URL}/api/login/verify-2fa`, 
+          {}, 
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+        setNotification("2FA has been enabled successfully");
+      } else {
+        // Disable 2FA
+        await axios.delete(
+          `${API_BASE_URL}/api/auth/disable2FA`, 
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+        setNotification("2FA has been disabled successfully");
+      }
+      
+      setIs2FAEnabled(new2FAStatus);
+      setShowSettings(false);
+      
+    } catch (error) {
+      setNotification("Failed to update 2FA settings. Please try again.");
+      console.error("2FA toggle error:", error);
     }
   };
 

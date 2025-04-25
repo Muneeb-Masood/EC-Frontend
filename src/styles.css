@@ -66,7 +66,7 @@ body {
 }
 
 .button:hover {
-  background-color: #0A1A2F;
+  background-color: #014194;
 }
 
 .linkText {
@@ -1411,7 +1411,7 @@ th {
 }
 
 .supportForm .button:hover {
-  background-color: #0A1A2F;
+  background-color: #014194;
 }
 
 .supportForm .button:disabled {
@@ -2044,7 +2044,7 @@ th {
 .kycPage .input:hover,
 .adminLogin .input:hover,
 .kycPage select:hover {
-  box-shadow: 0 0 0 1px hsla(221, 78%, 47%, 0.5);
+  box-shadow: 0 0 0 1px #014194(221 10% 16% / 0.5);
 }
 
 /* Buttons */
@@ -2793,7 +2793,7 @@ textarea.input {
 }
 
 .session-expired-modal .button:hover {
-  background-color: #0A1A2F;
+  background-color: #014194(214, 65%, 11%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(215, 187, 27, 0.3);
   color: #fff;
