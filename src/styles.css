@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
 
 body {
@@ -2583,6 +2584,161 @@ textarea.input {
   top: 80px;
   right: 20px;
 }
+
+/* Support Page */
+.supportPage {
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  background-color: #050F1C;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.supportPage .heading {
+  color: #4E8AFF;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.supportPage p {
+  color: #b0b0b0;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.supportPage .contactHeading {
+  color: #4E8AFF;
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 30px 0 15px;
+}
+
+.supportPage .contactInfo {
+  color: #b0b0b0;
+  text-align: center;
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.supportPage .formHeading {
+  color: #4E8AFF;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.supportPage .input {
+  width: 80%;
+  display: block;
+  margin: 10px auto;
+  padding: 14px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: #1E3A6B;
+  color: #ffffff;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 0 1px rgba(215, 187, 27, 0.3);
+}
+
+.supportPage textarea.input {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.supportPage .input:focus {
+  border-color: #4E8AFF;
+  box-shadow: 0 0 0 2px rgba(215, 187, 27, 0.5);
+  outline: none;
+}
+
+.supportPage .button {
+  width: 40%;
+  display: block;
+  margin: 15px auto;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.supportPage .button:not(:disabled) {
+  background-color: #4E8AFF;
+  color: #000;
+}
+
+.supportPage .button:disabled {
+  background-color: #444;
+  color: #777;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.supportPage .button:not(:disabled):hover {
+  background-color: #0A1A2F;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(215, 187, 27, 0.3);
+}
+
+.supportPage .error {
+  background-color: rgba(255, 59, 48, 0.15);
+  border-left: 4px solid #ff3b30;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin: 15px auto;
+  font-size: 0.9rem;
+  animation: slideIn 0.3s ease-out;
+  width: 80%;
+}
+
+.supportPage .success {
+  background-color: rgba(52, 199, 89, 0.15);
+  border-left: 4px solid #34c759;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin: 15px auto;
+  font-size: 0.9rem;
+  animation: slideIn 0.3s ease-out;
+  width: 80%;
+}
+
+.supportPage .footer {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #444;
+  font-size: 0.8rem;
+  color: #777;
+  text-align: center;
+}
+
+.supportPage .footer p {
+  margin: 5px 0;
+  font-size: 0.8rem;
+}
+
+.supportPage .footer a {
+  color: #b0b0b0;
+  text-decoration: none;
+  margin: 0 8px;
+  transition: color 0.2s ease;
+}
+
+.supportPage .footer a:hover {
+  color: #4E8AFF;
+}
+
 /* Session Expired Modal */
 .session-expired-modal {
   position: fixed;
@@ -2598,37 +2754,213 @@ textarea.input {
 }
 
 .session-expired-modal .modal-content {
-  background-color: #00d1ff;
-  padding: 30px;
-  border-radius: 10px;
-  max-width: 400px;
+  background-color: #050F1C;
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 500px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid #4E8AFF;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .session-expired-modal h3 {
-  color: #ff6b6b;
-  font-size: 1.5rem;
-  margin-bottom: 15px;
+  color: #4E8AFF;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .session-expired-modal p {
-  color: #ffffff;
+  color: #b0b0b0;
   margin-bottom: 25px;
   line-height: 1.5;
+  font-size: 1rem;
 }
 
 .session-expired-modal .button {
-  background-color: #4E8AFF ;
+  background-color: #4E8AFF;
   color: #000;
-  padding: 10px 25px;
-  border-radius: 5px;
+  padding: 14px 30px;
+  border-radius: 8px;
   border: none;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: inline-block;
 }
 
 .session-expired-modal .button:hover {
   background-color: #0A1A2F;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(215, 187, 27, 0.3);
+  color: #fff;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Admin Panel Styles */
+.adminPanel {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #050F1C;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.adminTabs {
+  display: flex;
+  border-bottom: 1px solid #444;
+  margin-bottom: 30px;
+}
+
+.adminTab {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #b0b0b0;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.adminTab:hover {
+  color: #ffffff;
+  background-color: rgba(78, 138, 255, 0.1);
+}
+
+.activeAdminTab {
+  color: #4E8AFF;
+  border-bottom: 3px solid #4E8AFF;
+  font-weight: 600;
+}
+
+.adminTabContent {
+  background-color: #0A1A2F;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.adminTabContent h3 {
+  color: #4E8AFF;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.adminTable th {
+  background-color: #1E3A6B;
+  color: #ffffff;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.adminTable td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #444;
+  color: #e0e0e0;
+}
+
+.adminTable tr:last-child td {
+  border-bottom: none;
+}
+
+.adminTable tr:hover td {
+  background-color: rgba(78, 138, 255, 0.05);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.approveButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.approveButton:hover {
+  background-color: #3d8b40;
+}
+
+.approveButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.rejectButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.rejectButton:hover {
+  background-color: #d32f2f;
+}
+
+.rejectButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.statusApproved {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.statusRejected {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.adminFooter {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #444;
+  text-align: center;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.adminFooter a {
+  color: #b0b0b0;
+  text-decoration: none;
+  margin: 0 10px;
+  transition: color 0.3s;
+}
+
+.adminFooter a:hover {
+  color: #4E8AFF;
 }
