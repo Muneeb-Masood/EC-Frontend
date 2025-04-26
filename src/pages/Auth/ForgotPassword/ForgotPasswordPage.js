@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import axios from 'axios';
 import "../../../styles.css";
+import OtpInput from '../../../components/OTPInput/OTPInput';
 
-// Forgot Password Page
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+
 const ForgotPasswordPage = () => {
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
