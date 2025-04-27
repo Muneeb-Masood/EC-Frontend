@@ -5,7 +5,6 @@ import "../../styles.css";
 import Notification from "../../components/Notification/Notification";
 import SessionExpiredModal from '../../components/SessionExpiredModal/SessionExpiredModal';
 
-
 import s1 from '../../assets/s1.png';
 import s2 from '../../assets/s2.png';
 import s3 from '../../assets/s3.png';
@@ -27,7 +26,6 @@ import depositIcon from '../../assets/deposit-icon.png';
 import withdrawIcon from '../../assets/withdraw-icon.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
-
 
 const Dashboard = ({ user, kycStatus, accountStatus }) => {
     // State for dashboard tabs (Transfer, Total, History, etc.)
@@ -296,38 +294,38 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         <h2 className="buyCryptoTitle">How to Buy/Sell Crypto</h2>
         <div className="buyCryptoSteps">
           <div className="buyCryptoStep">
-          <img 
-      src={s1} 
-      alt="Enter Amount & Select Payment"
-      className="stepImage"
-    />
+            <img 
+              src={s1} 
+              alt="Enter Amount & Select Payment"
+              className="stepImage"
+            />
             <h3 className="stepTitle">1. Enter Amount & Select Payment</h3>
             <p className="stepDescription">
-            Choose the amount and select a payment method (for buying) or a receiving account (for selling).
+              Choose the amount and select a payment method (for buying) or a receiving account (for selling).
             </p>
           </div>
           
           <div className="buyCryptoStep">
-          <img 
-      src={s2} 
-      alt="Confirm Order"
-      className="stepImage"
-    />
+            <img 
+              src={s2} 
+              alt="Confirm Order"
+              className="stepImage"
+            />
             <h3 className="stepTitle">2. Confirm Order</h3>
             <p className="stepDescription">
-            Review transaction details, including exchange rates, fees, and other relevant information.
+              Review transaction details, including exchange rates, fees, and other relevant information.
             </p>
           </div>
           
           <div className="buyCryptoStep">
-          <img 
-      src={s3} 
-      alt="Receive Crypto"
-      className="stepImage"
-    />
+            <img 
+              src={s3} 
+              alt="Receive Crypto"
+              className="stepImage"
+            />
             <h3 className="stepTitle">3. Complete Transaction</h3>
             <p className="stepDescription">
-            Receive crypto in your wallet (for buying) or cash in your payment account (for selling).
+              Receive crypto in your wallet (for buying) or cash in your payment account (for selling).
             </p>
           </div>
         </div>
@@ -362,40 +360,40 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             <div className="hotCryptosList">
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={bnbLogo} alt="BNB" className="cryptoLogo" />
-                BNB
+                  <img src={bnbLogo} alt="BNB" className="cryptoLogo" />
+                  BNB
                 </span>
                 <span className="cryptoPrice">лв1,148.33</span>
                 <span className="cryptoChange positive">+0.67%</span>
               </div>
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={btcLogo} alt="BTC" className="cryptoLogo" />
-                BTC
+                  <img src={btcLogo} alt="BTC" className="cryptoLogo" />
+                  BTC
                 </span>
                 <span className="cryptoPrice">лв155,138.40</span>
                 <span className="cryptoChange negative">-1.98%</span>
               </div>
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={ethLogo} alt="ETH" className="cryptoLogo" />
-                ETH
+                  <img src={ethLogo} alt="ETH" className="cryptoLogo" />
+                  ETH
                 </span>
                 <span className="cryptoPrice">лв3,436.51</span>
                 <span className="cryptoChange negative">-6.39%</span>
               </div>
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={partiLogo} alt="PARTI" className="cryptoLogo" />
-                PARTI
+                  <img src={partiLogo} alt="PARTI" className="cryptoLogo" />
+                  PARTI
                 </span>
                 <span className="cryptoPrice">лв0.574938</span>
                 <span className="cryptoChange negative">-5.90%</span>
               </div>
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={solLogo} alt="SOL" className="cryptoLogo" />
-                SOL
+                  <img src={solLogo} alt="SOL" className="cryptoLogo" />
+                  SOL
                 </span>
                 <span className="cryptoPrice">лв239.46</span>
                 <span className="cryptoChange negative">-4.39%</span>
@@ -407,40 +405,40 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             <div className="hotCryptosList">
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={bananaLogo} alt="BANANAS" className="cryptoLogo" />
-                BANANAS31
+                  <img src={bananaLogo} alt="BANANAS" className="cryptoLogo" />
+                  BANANAS31
                 </span>
                 <span className="cryptoPrice">лв0.00967964</span>
                 <span className="cryptoChange positive">+1.15%</span>
               </div>
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={broccoliLogo} alt="BROCCOLI" className="cryptoLogo" />
-                BROCCOLI714
+                  <img src={broccoliLogo} alt="BROCCOLI" className="cryptoLogo" />
+                  BROCCOLI714
                 </span>
                 <span className="cryptoPrice">лв0.0540052</span>
                 <span className="cryptoChange negative">-7.92%</span>
               </div>
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={tutLogo} alt="TUT" className="cryptoLogo" />
-                TUT
+                  <img src={tutLogo} alt="TUT" className="cryptoLogo" />
+                  TUT
                 </span>
                 <span className="cryptoPrice">лв0.045212</span>
                 <span className="cryptoChange negative">-13.69%</span>
               </div>
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={nilLogo} alt="NIL" className="cryptoLogo" />
-                NIL
+                  <img src={nilLogo} alt="NIL" className="cryptoLogo" />
+                  NIL
                 </span>
                 <span className="cryptoPrice">лв0.78498</span>
                 <span className="cryptoChange negative">-4.96%</span>
               </div>
               <div className="cryptoItem">
                 <span className="cryptoName">
-                <img src={xusdLogo} alt="XUSD" className="cryptoLogo" />
-                XUSD
+                  <img src={xusdLogo} alt="XUSD" className="cryptoLogo" />
+                  XUSD
                 </span>
                 <span className="cryptoPrice">лв1.78</span>
                 <span className="cryptoChange negative">-0.02%</span>
@@ -464,79 +462,284 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         )}
         
         <div className="tabs">
-  <button 
-    onClick={() => setDashboardTab("transfer")}
-    className={dashboardTab === "transfer" ? "activeTab" : "tab"}
-  >
-    <img 
-      src={transferIcon} 
-      alt="Transfer" 
-      className="tabIcon" 
-    />
-    Transfer ETH
-  </button>
-  
-  <button 
-    onClick={() => setDashboardTab("total")}
-    className={dashboardTab === "total" ? "activeTab" : "tab"}
-  >
-    <img 
-      src={eWalletIcon} 
-      alt="Total" 
-      className="tabIcon" 
-    />
-    Total ETH
-  </button>
-  
-  <button 
-    onClick={() => setDashboardTab("history")}
-    className={dashboardTab === "history" ? "activeTab" : "tab"}
-  >
-    <img 
-      src={historyIcon} 
-      alt="History" 
-      className="tabIcon" 
-    />
-    Transaction History
-  </button>
-  
-  <button 
-    onClick={() => setDashboardTab("conversion")}
-    className={dashboardTab === "conversion" ? "activeTab" : "tab"}
-  >
-    <img 
-      src={conversionIcon} 
-      alt="Conversion" 
-      className="tabIcon" 
-    />
-    ETH Conversion
-  </button>
-  
-  <button 
-    onClick={() => setDashboardTab("deposit")}
-    className={dashboardTab === "deposit" ? "activeTab" : "tab"}
-  >
-    <img 
-      src={depositIcon} 
-      alt="Deposit" 
-      className="tabIcon" 
-    />
-    Deposit
-  </button>
-  
-  <button 
-    onClick={() => setDashboardTab("withdraw")}
-    className={dashboardTab === "withdraw" ? "activeTab" : "tab"}
-  >
-    <img 
-      src={withdrawIcon} 
-      alt="Withdraw" 
-      className="tabIcon" 
-    />
-    Withdraw
-  </button>
-</div>
+          <button 
+            onClick={() => {
+              updateLastActivityTime();
+              setDashboardTab("transfer");
+            }}
+            className={dashboardTab === "transfer" ? "activeTab" : "tab"}
+          >
+            <img 
+              src={transferIcon} 
+              alt="Transfer" 
+              className="tabIcon" 
+            />
+            Transfer ETH
+          </button>
+          
+          <button 
+            onClick={() => {
+              updateLastActivityTime();
+              setDashboardTab("total");
+            }}
+            className={dashboardTab === "total" ? "activeTab" : "tab"}
+          >
+            <img 
+              src={eWalletIcon} 
+              alt="Total" 
+              className="tabIcon" 
+            />
+            Total ETH
+          </button>
+          
+          <button 
+            onClick={() => {
+              updateLastActivityTime();
+              setDashboardTab("history");
+            }}
+            className={dashboardTab === "history" ? "activeTab" : "tab"}
+          >
+            <img 
+              src={historyIcon} 
+              alt="History" 
+              className="tabIcon" 
+            />
+            Transaction History
+          </button>
+          
+          <button 
+            onClick={() => {
+              updateLastActivityTime();
+              setDashboardTab("conversion");
+            }}
+            className={dashboardTab === "conversion" ? "activeTab" : "tab"}
+          >
+            <img 
+              src={conversionIcon} 
+              alt="Conversion" 
+              className="tabIcon" 
+            />
+            ETH Conversion
+          </button>
+          
+          <button 
+            onClick={() => {
+              updateLastActivityTime();
+              setDashboardTab("deposit");
+            }}
+            className={dashboardTab === "deposit" ? "activeTab" : "tab"}
+          >
+            <img 
+              src={depositIcon} 
+              alt="Deposit" 
+              className="tabIcon" 
+            />
+            Deposit
+          </button>
+          
+          <button 
+            onClick={() => {
+              updateLastActivityTime();
+              setDashboardTab("withdraw");
+            }}
+            className={dashboardTab === "withdraw" ? "activeTab" : "tab"}
+          >
+            <img 
+              src={withdrawIcon} 
+              alt="Withdraw" 
+              className="tabIcon" 
+            />
+            Withdraw
+          </button>
+        </div>
 
+        {/* Tab Content Sections */}
+        {dashboardTab === "transfer" && (
+          <div className="transferTab">
+            <h3>Transfer ETH</h3>
+            <div className="tab-input-row">
+              <input
+                type="text"
+                placeholder="Your Wallet ID"
+                value={walletId}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setWalletId(e.target.value);
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Receiver Wallet ID"
+                value={receiverWalletId}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setReceiverWalletId(e.target.value);
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Amount in ETH"
+                value={amount}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setAmount(e.target.value);
+                }}
+              />
+            </div>
+            <button
+              onClick={handleTransfer}
+              className="button"
+              disabled={!walletId || !receiverWalletId || !amount}
+            >
+              Transfer
+            </button>
+          </div>
+        )}
+
+        {dashboardTab === "total" && (
+          <div className="totalTab">
+            <h3>Total ETH</h3>
+            <p>You have {totalCoins.toFixed(6)} ETH.</p>
+          </div>
+        )}
+
+        {dashboardTab === "history" && (
+          <div className="historyTab">
+            <h3>Transaction History</h3>
+            {transactionHistory.length === 0 ? (
+              <p>No transactions yet.</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date/Time</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactionHistory.map((transaction) => (
+                    <tr key={transaction.id}>
+                      <td>{transaction.date}</td>
+                      <td>{transaction.type}</td>
+                      <td>{transaction.amount}</td>
+                      <td>{transaction.from}</td>
+                      <td>{transaction.to}</td>
+                      <td>{transaction.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+
+        {dashboardTab === "conversion" && (
+          <div className="conversionTab">
+            <h3>ETH Conversion</h3>
+            <p>Total ETH: {totalCoins.toFixed(6)}</p>
+            <div className="tab-input-row">
+              <select
+                value={conversionType}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setConversionType(e.target.value);
+                }}
+              >
+                <option value="coinToUsd">ETH to USD</option>
+                <option value="usdToCoin">USD to ETH</option>
+              </select>
+              <input
+                type="number"
+                placeholder="Amount"
+                value={conversionAmount}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setConversionAmount(e.target.value);
+                }}
+              />
+            </div>
+            <button
+              onClick={handleConversion}
+              className="button"
+              disabled={!conversionAmount}
+            >
+              Convert
+            </button>
+            {conversionResult && <p>Result: {conversionResult}</p>}
+          </div>
+        )}
+
+        {dashboardTab === "deposit" && (
+          <div className="depositTab">
+            <h3>Deposit</h3>
+            <p>Total ETH: {totalCoins.toFixed(6)}</p>
+            <div className="tab-input-row">
+              <input
+                type="text"
+                placeholder="Bank Account Number"
+                value={depositBankAccount}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setDepositBankAccount(e.target.value);
+                }}
+              />
+              <input
+                type="number"
+                placeholder="Amount in USD"
+                value={depositAmount}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setDepositAmount(e.target.value);
+                }}
+              />
+            </div>
+            <button
+              onClick={handleDeposit}
+              className="button"
+              disabled={!depositAmount || !depositBankAccount}
+            >
+              Deposit
+            </button>
+          </div>
+        )}
+
+        {dashboardTab === "withdraw" && (
+          <div className="withdrawTab">
+            <h3>Withdraw</h3>
+            <p>Total ETH: {totalCoins.toFixed(6)}</p>
+            <div className="tab-input-row">
+              <input
+                type="text"
+                placeholder="Bank Account Number"
+                value={withdrawBankAccount}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setWithdrawBankAccount(e.target.value);
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Amount in ETH"
+                value={withdrawAmount}
+                onChange={(e) => {
+                  updateLastActivityTime();
+                  setWithdrawAmount(e.target.value);
+                }}
+              />
+            </div>
+            <button
+              onClick={handleWithdraw}
+              className="button"
+              disabled={!withdrawAmount || !withdrawBankAccount}
+            >
+              Withdraw
+            </button>
+          </div>
+        )}
   
         <div className="kycStatus">
           <h3>KYC Status</h3>
@@ -582,4 +785,5 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
       </div>
     );
   };
+  
   export default Dashboard;
