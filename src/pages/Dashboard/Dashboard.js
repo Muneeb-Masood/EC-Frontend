@@ -72,10 +72,11 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
       const check2FAStatus = async () => {
         try {
           const token = localStorage.getItem('token');
-          const response = await axios.get(`${API_BASE_URL}/api/user/2fa-status`, {
+          const response = await axios.get(`${API_BASE_URL}/api/auth/2FAStatus`, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          setIs2FAEnabled(response.data.is2FAEnabled);
+          console.log(response.data.data.twoFAEnabled)
+          setIs2FAEnabled(response.data.data.twoFAEnabled);
         } catch (error) {
           console.error("Could not fetch 2FA status:", error);
         }
@@ -96,7 +97,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         const idleTime = currentTime - lastActivityTime;
         
         // Show session expired modal after 30 seconds of inactivity
-        if (idleTime > 30000 && !isSessionExpired) {
+        if (idleTime > 300000000 && !isSessionExpired) {
           setIsSessionExpired(true);
         }
       };
@@ -131,36 +132,112 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
       window.location.href = '/login';
     };
   
-    const handleTransfer = () => {
+    const handleTransfer = async () => {
       updateLastActivityTime();
-      if (!walletId || !receiverWalletId || !amount) {
+      if (!receiverWalletId || !amount) {
         setNotification("Please fill all fields.");
         return;
       }
   
-      if (parseInt(amount) > totalCoins) {
-        setNotification("Insufficient ETH.");
-        return;
+      // if (parseInt(amount) > totalCoins) {
+      //   setNotification("Insufficient ETH.");
+      //   return;
+      // }
+  
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+          `${API_BASE_URL}/api/sendETH`,
+          {
+            recieverWalletAddress: receiverWalletId,
+            amountInETH: amount,
+            initiationTimestamp: Math.floor(Date.now() / 1000)
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`   
+            }
+          }
+        );
+  
+        if (response) {
+          console.log(response)
+          setNotification(`${response.data.message}. The transaction ID is ${response.data.TxHash}`);
+  
+        } 
+      } catch (error) {
+        handleApiError(error, "Transaction cannot be done");
+      } finally {
+        // setIsLoading(false);
       }
-  
-      const newTransaction = {
-        id: transactionHistory.length + 1,
-        from: walletId,
-        to: receiverWalletId,
-        amount: parseInt(amount),
-        date: new Date().toLocaleString(),
-        type: "Transfer",
-        status: "Completed",
-      };
-  
-      setTransactionHistory([...transactionHistory, newTransaction]);
-      setTotalCoins(totalCoins - parseInt(amount));
-      setNotification("Transfer successful!");
+
       setWalletId("");
       setReceiverWalletId("");
       setAmount("");
     };
   
+    useEffect(() => {
+      if (dashboardTab === "total") {
+        const fetchBalance = async () => {
+
+          try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(
+              `${API_BASE_URL}/api/walletBalance`,
+              {
+                headers: {
+                  'Authorization': `Bearer ${token}`   
+                }
+              }
+            );
+      
+            if (response) {
+              setTotalCoins(response.data.balance)
+      
+            } 
+          } catch (error) {
+            handleApiError(error, "Cannot fetch wallet balance");
+          } finally {
+            // setIsLoading(false);
+          }
+
+        };
+        
+        fetchBalance(); 
+      }
+
+      if (dashboardTab === "history") {
+        const fetchHistory = async () => {
+
+          try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(
+              `${API_BASE_URL}/api/history`,
+              {
+                headers: {
+                  'Authorization': `Bearer ${token}`   
+                }
+              }
+            );
+      
+            if (response) {
+              setTransactionHistory(response.data.data)
+      
+            } 
+          } catch (error) {
+            handleApiError(error, "Cannot fetch Transactions History");
+          } finally {
+            // setIsLoading(false);
+          }
+
+        };
+
+        fetchHistory(); 
+      }
+    }, [dashboardTab]); // Runs whenever dashboardTab changes
+    
+
+
     const handleConversion = () => {
       updateLastActivityTime();
       if (!conversionAmount) {
@@ -176,9 +253,9 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
       setConversionAmount("");
     };
   
-    const handleDeposit = () => {
+    const handleDeposit = async () => {
       updateLastActivityTime();
-      if (!depositAmount || !depositBankAccount) {
+      if (!depositAmount ) {
         setNotification("Please fill all fields.");
         return;
       }
@@ -189,57 +266,80 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         return;
       }
   
-      // Convert USD to ETH
-      const ethAmount = usdAmount / ETH_TO_USD_RATE;
-      setTotalCoins(totalCoins + ethAmount);
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+          `${API_BASE_URL}/api/depositCoinsToWallet`,
+          {
+            "usdAmount": usdAmount,
+            "initiationTimestamp": Math.floor(Date.now() / 1000)
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`   
+            }
+          }
+        );
   
-      // Add deposit transaction to history
-      const newTransaction = {
-        id: transactionHistory.length + 1,
-        from: "Bank Account",
-        to: "ETH Wallet",
-        amount: ethAmount.toFixed(6),
-        date: new Date().toLocaleString(),
-        type: "Deposit",
-        status: "Completed",
-      };
-      setTransactionHistory([...transactionHistory, newTransaction]);
+        if (response) {
+          console.log(response)
+          setNotification(`${response.data.message}. The transaction ID is ${response.data.TxHash}`);
   
-      setNotification(`Successful Deposit: ${ethAmount.toFixed(6)} ETH added.`);
+        } 
+      } catch (error) {
+        handleApiError(error, "Transaction cannot be done");
+      } finally {
+        // setIsLoading(false);
+      }
+
+
+      setNotification(`Successful Deposit: ${usdAmount.toFixed(6)} USD added.`);
       setDepositAmount("");
       setDepositBankAccount("");
     };
   
-    const handleWithdraw = () => {
+    const handleWithdraw = async () => {
       updateLastActivityTime();
-      if (!withdrawAmount || !withdrawBankAccount) {
+      if (!withdrawAmount ) {
         setNotification("Please fill all fields.");
         return;
       }
   
-      const ethAmount = parseFloat(withdrawAmount);
-      if (isNaN(ethAmount) || ethAmount <= 0 || ethAmount > totalCoins) {
-        setNotification("Invalid or insufficient ETH.");
+      const usdAmount = parseFloat(withdrawAmount);
+      if (isNaN(usdAmount) || usdAmount <= 0) {
+        setNotification("Invalid or insufficient USD amount.");
         return;
       }
   
-      // Convert ETH to USD
-      const usdAmount = ethAmount * ETH_TO_USD_RATE;
-      setTotalCoins(totalCoins - ethAmount);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+          `${API_BASE_URL}/api/withdrawCoinsFromWallet`,
+          {
+            "usdAmount": usdAmount,
+            "initiationTimestamp": Math.floor(Date.now() / 1000)
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`   
+            }
+          }
+        );
   
-      // Add withdrawal transaction to history
-      const newTransaction = {
-        id: transactionHistory.length + 1,
-        from: "ETH Wallet",
-        to: "Bank Account",
-        amount: ethAmount.toFixed(6),
-        date: new Date().toLocaleString(),
-        type: "Withdrawal",
-        status: "Completed",
-      };
-      setTransactionHistory([...transactionHistory, newTransaction]);
+        if (response) {
+          console.log(response)
+          setNotification(`${response.data.message}. The transaction ID is ${response.data.TxHash}`);
   
-      setNotification(`Successful Withdrawal: $${usdAmount.toFixed(2)} sent to your bank account.`);
+        } 
+      } catch (error) {
+        handleApiError(error, "Transaction cannot be done");
+      } finally {
+        // setIsLoading(false);
+      }
+
+
+      setNotification(`Successful Withdrawal: $${usdAmount} sent to your bank account.`);
       setWithdrawAmount("");
       setWithdrawBankAccount("");
     };
@@ -255,7 +355,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         if (new2FAStatus) {
           // Enable 2FA
           await axios.post(
-            `${API_BASE_URL}/api/login/verify-2fa`, 
+            `${API_BASE_URL}/api/auth/enable2FA`, 
             {}, 
             {
               headers: { Authorization: `Bearer ${token}` }
@@ -558,15 +658,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
           <div className="transferTab">
             <h3>Transfer ETH</h3>
             <div className="tab-input-row">
-              <input
-                type="text"
-                placeholder="Your Wallet ID"
-                value={walletId}
-                onChange={(e) => {
-                  updateLastActivityTime();
-                  setWalletId(e.target.value);
-                }}
-              />
+
               <input
                 type="text"
                 placeholder="Receiver Wallet ID"
@@ -589,7 +681,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             <button
               onClick={handleTransfer}
               className="button"
-              disabled={!walletId || !receiverWalletId || !amount}
+              disabled={!receiverWalletId || !amount}
             >
               Transfer
             </button>
@@ -599,7 +691,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         {dashboardTab === "total" && (
           <div className="totalTab">
             <h3>Total ETH</h3>
-            <p>You have {totalCoins.toFixed(6)} ETH.</p>
+            <p>You have {totalCoins} ETH.</p>
           </div>
         )}
 
@@ -623,11 +715,11 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
                 <tbody>
                   {transactionHistory.map((transaction) => (
                     <tr key={transaction.id}>
-                      <td>{transaction.date}</td>
+                      <td>{new Date(transaction.initiationTimestamp * 1000).toLocaleString()}</td>
                       <td>{transaction.type}</td>
                       <td>{transaction.amount}</td>
-                      <td>{transaction.from}</td>
-                      <td>{transaction.to}</td>
+                      <td>{transaction.sourceWalletAddress}</td>
+                      <td>{transaction.destinationWalletAddress}</td>
                       <td>{transaction.status}</td>
                     </tr>
                   ))}
@@ -640,7 +732,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         {dashboardTab === "conversion" && (
           <div className="conversionTab">
             <h3>ETH Conversion</h3>
-            <p>Total ETH: {totalCoins.toFixed(6)}</p>
+            <p>Total ETH: {totalCoins}</p>
             <div className="tab-input-row">
               <select
                 value={conversionType}
@@ -676,17 +768,8 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         {dashboardTab === "deposit" && (
           <div className="depositTab">
             <h3>Deposit</h3>
-            <p>Total ETH: {totalCoins.toFixed(6)}</p>
+            <p>Total ETH: {totalCoins}</p>
             <div className="tab-input-row">
-              <input
-                type="text"
-                placeholder="Bank Account Number"
-                value={depositBankAccount}
-                onChange={(e) => {
-                  updateLastActivityTime();
-                  setDepositBankAccount(e.target.value);
-                }}
-              />
               <input
                 type="number"
                 placeholder="Amount in USD"
@@ -700,7 +783,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             <button
               onClick={handleDeposit}
               className="button"
-              disabled={!depositAmount || !depositBankAccount}
+              disabled={!depositAmount }
             >
               Deposit
             </button>
@@ -710,20 +793,11 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
         {dashboardTab === "withdraw" && (
           <div className="withdrawTab">
             <h3>Withdraw</h3>
-            <p>Total ETH: {totalCoins.toFixed(6)}</p>
+            <p>Total ETH: {totalCoins}</p>
             <div className="tab-input-row">
               <input
                 type="text"
-                placeholder="Bank Account Number"
-                value={withdrawBankAccount}
-                onChange={(e) => {
-                  updateLastActivityTime();
-                  setWithdrawBankAccount(e.target.value);
-                }}
-              />
-              <input
-                type="text"
-                placeholder="Amount in ETH"
+                placeholder="Amount in USD"
                 value={withdrawAmount}
                 onChange={(e) => {
                   updateLastActivityTime();
@@ -734,7 +808,7 @@ const Dashboard = ({ user, kycStatus, accountStatus }) => {
             <button
               onClick={handleWithdraw}
               className="button"
-              disabled={!withdrawAmount || !withdrawBankAccount}
+              disabled={!withdrawAmount}
             >
               Withdraw
             </button>

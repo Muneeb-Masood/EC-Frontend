@@ -4,6 +4,7 @@ import axios from 'axios';
 import "../../../styles.css";
 import OtpInput from '../../../components/OTPInput/OTPInput';
 import Notification from '../../../components/Notification/Notification';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
@@ -22,13 +23,16 @@ const LoginPage = ({ onLogin }) => {
   });
 
   // Generate device fingerprint
-  const generateFingerprint = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  };
+  // const generateFingerprint = async () => {
+
+  //         const fp = await FingerprintJS.load();
+  //         const result = await fp.get();
+  
+
+  //     console.log(result.visitorId)
+  //     return result.visitorId;
+
+  // };
 
   // Email validation
   const validateEmail = (email) => {
@@ -52,7 +56,10 @@ const LoginPage = ({ onLogin }) => {
     setError("");
     
     try {
-      const fingerprint = generateFingerprint();
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      console.log(result.visitorId)
+      const fingerprint = result.visitorId;
       const response = await axios.post(`${API_BASE_URL}/api/login/login`, {
         email,
         password,
@@ -66,7 +73,7 @@ const LoginPage = ({ onLogin }) => {
         setShowOtpField(true);
         setSuccessMessage("An OTP has been sent to your email.");
       } else {
-        handleSuccessfulLogin(response.data.token);
+        handleSuccessfulLogin(response.data.token, response.data.kycVerificaionStatus);
       }
     } catch (error) {
       handleApiError(error, "Login failed. Please try again.");
@@ -76,11 +83,11 @@ const LoginPage = ({ onLogin }) => {
   };
 
   // Handle successful login
-  const handleSuccessfulLogin = (token) => {
+  const handleSuccessfulLogin = (token, kycVerificaionStatus) => {
     setSuccessMessage("Login successful!");
     localStorage.setItem('token', token);
     setTimeout(() => {
-      onLogin();
+      onLogin(kycVerificaionStatus);
       resetForm();
     }, 2000);
   };
@@ -95,7 +102,14 @@ const LoginPage = ({ onLogin }) => {
     setIsLoading(true);
     
     try {
-      const fingerprint = generateFingerprint();
+      // const fingerprint = generateFingerprint();
+
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+
+      console.log(result.visitorId)
+      const fingerprint = result.visitorId;
+
       const response = await axios.post(`${API_BASE_URL}/api/login/verify-2fa`, {
         otp,
         otpToken,
@@ -104,7 +118,7 @@ const LoginPage = ({ onLogin }) => {
         longitude: geoLocation.longitude
       });
 
-      handleSuccessfulLogin(response.data.token);
+      handleSuccessfulLogin(response.data.token, response.data.kycVerificaionStatus);
     } catch (error) {
       handleApiError(error, "OTP verification failed. Please try again.");
     } finally {
