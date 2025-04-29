@@ -2964,3 +2964,326 @@ textarea.input {
 .adminFooter a:hover {
   color: #4E8AFF;
 }
+
+
+
+/* Map Styles */
+.mapContainer {
+  height: 400px;
+  width: 100%;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mapControls {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.mapControls label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mapControls input[type="range"] {
+  width: 200px;
+}
+
+.locationButton {
+  background-color: #4a90e2;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Location status indicators */
+.inRadius {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.outOfRadius {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Popup actions */
+.popupActions {
+  margin-top: 10px;
+  display: flex;
+  gap: 5px;
+}
+
+.popupActions button {
+  padding: 3px 6px;
+  font-size: 12px;
+}
+
+/* Leaflet popup adjustments */
+.leaflet-popup-content {
+  margin: 10px;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 6px;
+}
+
+/* Cluster Info Styles */
+.clusterInfoContainer {
+  background-color: #0A1A2F;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #1E3A6B;
+}
+
+.clusterInfoContainer h4 {
+  color: #4E8AFF;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #444;
+}
+
+.clusterSummary {
+  background-color: rgba(30, 58, 107, 0.3);
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.clusterSummary p {
+  margin: 8px 0;
+  color: #e0e0e0;
+}
+
+.clusterSummary strong {
+  color: #b0b0b0;
+}
+
+.clustersDetails {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.clusterDetail {
+  background-color: rgba(30, 58, 107, 0.2);
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #4E8AFF;
+}
+
+.clusterDetail h6 {
+  color: #4E8AFF;
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+}
+
+.clusterDetail p {
+  margin: 6px 0;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.clusterDetail strong {
+  color: #b0b0b0;
+  font-weight: 500;
+}
+
+.suspiciousCluster {
+  border-left-color: #f44336;
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+.normalCluster {
+  border-left-color: #4caf50;
+}
+
+.suspiciousText {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+.normalText {
+  color: #4caf50 !important;
+  font-weight: 600;
+}
+
+/* Transaction Details Modal */
+.transactionDetailsModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.transactionDetailsModal .modalContent {
+  background-color: #050F1C;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid #1E3A6B;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.transactionDetailsModal h3 {
+  color: #4E8AFF;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.infoButton {
+  background-color: #4E8AFF;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.infoButton:hover {
+  background-color: #3a6fc9;
+}
+
+.closeButton {
+  background-color: #666;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.closeButton:hover {
+  background-color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .clustersDetails {
+    grid-template-columns: 1fr;
+  }
+  
+  .transactionDetailsModal .modalContent {
+    padding: 20px;
+  }
+  
+  .modalButtons {
+    flex-direction: column;
+  }
+  
+  .modalButtons button {
+    width: 100%;
+  }
+}
+
+/* Cluster Info Text Styles */
+.cluster-text-details {
+  background-color: #0A1A2F;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 15px 0;
+  border: 1px solid #1E3A6B;
+  font-family: monospace;
+  white-space: pre-wrap;
+  color: #e0e0e0;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.cluster-text-header {
+  color: #4E8AFF;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.cluster-text-item {
+  margin-left: 20px;
+  padding: 5px 0;
+}
+
+.cluster-text-key {
+  color: #b0b0b0;
+  font-weight: 500;
+}
+
+.cluster-text-value {
+  color: #ffffff;
+}
+
+.cluster-text-suspicious {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.cluster-text-normal {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.cluster-text-section {
+  margin-top: 15px;
+  padding-left: 10px;
+  border-left: 2px solid #1E3A6B;
+}
+
+.cluster-text-subheader {
+  color: #4E8AFF;
+  font-weight: 500;
+  margin: 10px 0 5px 0;
+}
+
+/* Compact version for tables */
+.compact-cluster-info {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.compact-cluster-info .cluster-text-item {
+  margin-left: 10px;
+  padding: 2px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .cluster-text-details {
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+  
+  .compact-cluster-info {
+    max-width: 200px;
+  }
+}
