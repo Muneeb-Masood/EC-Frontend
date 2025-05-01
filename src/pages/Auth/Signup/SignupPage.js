@@ -58,8 +58,8 @@ const SignupPage = ({ onSignup }) => {
           phone
         });
   
-        setShowOtpField(true);
-        setSuccessMessage("A verification OTP has been sent to your email.");
+        // setShowOtpField(true);
+        setSuccessMessage("Account has been created Sucessfullt");
       } catch (error) {
         handleApiError(error, "Signup failed. Please try again.");
       } finally {

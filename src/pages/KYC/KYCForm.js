@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../styles.css";
 import '../../components/Notification/Notification';
+import {useMessage } from "../../context/MessageContext";
 
 
 //KYC Form component
@@ -10,19 +11,19 @@ const KYCForm = ({ onKYCSubmit }) => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [documentType, setDocumentType] = useState("passport");
     const [picture, setPicture] = useState(null);
-    const [error, setError] = useState("");
+    const {displayMessage , setDisplayMessage} =  useMessage();
   
     const handleSubmit = () => {
       // Check if any field is empty
       if (!name || !phoneNumber || !documentType || !picture) {
-        setError("Must fill every field before submitting.");
+        setDisplayMessage("Must fill every field before submitting.");
         return;
       }
   
       // Validate phone number format
       const phoneRegex = /^\+92[\s\-]?\(?(\d{3})\)?[\s\-]?\d{7}$/;
       if (!phoneRegex.test(phoneNumber)) {
-        setError("Invalid phone number. Please use the format +92XXXXXXXXX, +92 (XXX) XXXXXXX, +92-XXX-XXXXXXX, or +92 XXX XXXXXXX.");
+        setDisplayMessage("Invalid phone number. Please use the format +92XXXXXXXXX, +92 (XXX) XXXXXXX, +92-XXX-XXXXXXX, or +92 XXX XXXXXXX.");
         return;
       }
   
@@ -33,21 +34,26 @@ const KYCForm = ({ onKYCSubmit }) => {
         documentType,
         picture,
       });
-      onKYCSubmit();
-  
+      onKYCSubmit({
+        name,
+        phoneNumber,
+        documentType,
+        document : picture
+      });
+        
       // Clear fields after successful submission
       setName("");
       setPhoneNumber("");
-      setDocumentType("passport");
+      setDocumentType("");
       setPicture(null);
-      setError(""); // Clear any previous errors
+      setDisplayMessage(""); // Clear any previous errors
     };
   
-    // Clear error when phone number is updated and meets the requirements
+    // Clear displayMessage when phone number is updated and meets the requirements
     useEffect(() => {
       const phoneRegex = /^\+92[\s\-]?\(?(\d{3})\)?[\s\-]?\d{7}$/;
       if (phoneRegex.test(phoneNumber)) {
-        setError((prevError) =>
+        setDisplayMessage((prevError) =>
           prevError === "Invalid phone number. Please use the format +92XXXXXXXXX, +92 (XXX) XXXXXXX, +92-XXX-XXXXXXX, or +92 XXX XXXXXXX."
             ? ""
             : prevError
@@ -62,7 +68,7 @@ const KYCForm = ({ onKYCSubmit }) => {
           Enter your details, select ID type, upload the document, and submit for
           KYC verification
         </p>
-        {error && <div className="error">{error}</div>}
+        {displayMessage && <div className="error">{displayMessage}</div>}
         <input
           type="text"
           placeholder="Full Name"

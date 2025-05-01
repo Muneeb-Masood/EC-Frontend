@@ -11,7 +11,10 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import SupportPage from "./pages/Support/SupportPage";
 import KYCForm from "./pages/KYC/KYCForm";
-
+import apiRequest from "./utils/helper_function";
+import { useMessage } from "./context/MessageContext";
+import genericErrorMessage from "./constant";
+import baseUrl from "./constant";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,6 +24,7 @@ const App = () => {
   const [kycRequests, setKycRequests] = useState([]);
   const [kycStatus, setKycStatus] = useState("Pending");
   const [accountStatus, setAccountStatus] = useState("active");
+  const {displayMessage , setDisplayMessage} = useMessage();
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -35,9 +39,31 @@ const App = () => {
     setIsLoggedIn(true);
   };
 
-  const handleKYCSubmit = (kycData) => {
-    setKycRequests([...kycRequests, { ...kycData, status: "Pending" }]);
+  const handleKYCSubmit = async (kycData) => {
+    setDisplayMessage("Dummy Message");
+
+    const formData = new FormData();
+    formData.append("name", kycData.name);
+    formData.append("phoneNumber", kycData.phoneNumber);
+    formData.append("documentType", kycData.documentType);
+    formData.append("document", kycData.document);
+
+    // console.log("From line 50");
+    // console.log(kycData.picture);
+    console.log(kycData.document);
+    setKycRequests(kycData);
+    const result = await apiRequest('POST', 'http://localhost:5000/api/kyc/uploadDocs', formData);
+    if(result.success){
+      setTimeout(() => {
+        setIsKYCSubmitted(true);
+      }, 2000);
+      return;
+    }
+
+    setDisplayMessage(genericErrorMessage);
     setIsKYCSubmitted(true);
+
+    
   };
 
   const handleApprove = (index) => {
