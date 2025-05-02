@@ -21,9 +21,11 @@ const App = () => {
   const [kycRequests, setKycRequests] = useState([]);
   const [kycStatus, setKycStatus] = useState("Pending");
   const [accountStatus, setAccountStatus] = useState("active");
+  const [kycVerificaionStatus, setKycVerificaionStatus] = useState(null)
 
-  const handleLogin = () => {
+  const handleLogin = (kycVerificaionStatus) => {
     setIsLoggedIn(true);
+    setKycVerificaionStatus(kycVerificaionStatus)
   };
 
   const handleAdminLogin = () => {
@@ -63,8 +65,8 @@ const App = () => {
           <Route path="/admin-login" element={isAdminLoggedIn ? <Navigate to="/admin" /> : <AdminLogin onAdminLogin={handleAdminLogin} />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/signup" element={isLoggedIn ? <Navigate to="/kyc" /> : <SignupPage onSignup={handleSignup} />} />
-          <Route path="/kyc" element={isKYCSubmitted ? <Navigate to="/dashboard" /> : isLoggedIn ? <KYCForm onKYCSubmit={handleKYCSubmit} /> : <Navigate to="/login" />} />
-          <Route path="/dashboard" element={isKYCSubmitted ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} /> : <Navigate to="/login" />} />
+          <Route path="/kyc" element={kycVerificaionStatus === 'verified' ? <Navigate to="/dashboard" /> : isLoggedIn ? <KYCForm onKYCSubmit={handleKYCSubmit} kycVerificaionStatus={kycVerificaionStatus}/> : <Navigate to="/login" />} />
+          <Route path="/dashboard" element={kycVerificaionStatus === 'verified' ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} /> : <Navigate to="/login" />} />
           <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApprove} onReject={handleReject} /> : <Navigate to="/admin-login" />} />
           <Route path="/support" element={<SupportPage />} />
         </Routes>

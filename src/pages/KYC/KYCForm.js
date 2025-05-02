@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../styles.css";
-import '../../components/Notification/Notification';
-
+import "../../components/Notification/Notification";
 
 const KYCForm = ({ onKYCSubmit }) => {
   const [name, setName] = useState("");
