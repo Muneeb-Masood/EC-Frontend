@@ -106,10 +106,12 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
   ]);
   
   const [notification, setNotification] = useState(null);
-  const [mapCenter, setMapCenter] = useState({ lat: 51.505, lng: -0.09 }); // Default center (London)
-  const [radius, setRadius] = useState(2000); // 2km in meters
+  const [mapCenter, setMapCenter] = useState({ lat: 51.505, lng: -0.09 });
+  const [radius, setRadius] = useState(2000);
   const [userLocation, setUserLocation] = useState(null);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [selectedKYCRequest, setSelectedKYCRequest] = useState(null);
+  const [allClusters, setAllClusters] = useState([]);
+  const [mapKey, setMapKey] = useState(0);
 
   // Get admin's current location
   useEffect(() => {
@@ -128,9 +130,40 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     }
   }, []);
 
+  // Extract all clusters from transactions
+  useEffect(() => {
+    const clusters = [];
+    transactions.forEach(tx => {
+      if (tx.clusters_info) {
+        Object.keys(tx.clusters_info).forEach(key => {
+          if (key.includes('cluster') && key.includes('info') && key !== 'clusters_info') {
+            const cluster = tx.clusters_info[key];
+            if (!clusters.some(c => c.label === cluster.label)) {
+              clusters.push({
+                ...cluster,
+                sourceTransaction: tx.id,
+                clusterKey: key
+              });
+            }
+          }
+        });
+      }
+    });
+    setAllClusters(clusters);
+  }, [transactions]);
+
+  // Auto-refresh map every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMapKey(prevKey => prevKey + 1);
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Calculate distance between two coordinates in km
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Earth's radius in km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = 
@@ -203,6 +236,10 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     
     onApprove(index);
     setNotification({ type: 'success', message: 'KYC request approved!' });
+  };
+
+  const viewKYCDocuments = (request) => {
+    setSelectedKYCRequest(request);
   };
 
   const renderClusterInfo = (clusterInfo) => {
@@ -284,104 +321,18 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
         >
           Deposit Approvals
         </button>
+        <button
+          className={`adminTab ${activeTab === 'clusters' ? 'activeAdminTab' : ''}`}
+          onClick={() => setActiveTab('clusters')}
+        >
+          Clusters
+        </button>
       </div>
       
       {activeTab === 'kyc' && (
         <div className="adminTabContent">
           <h3>KYC Verification Requests</h3>
           
-          {/* Map Section */}
-          <div className="mapSection">
-            <h4>Requests within {radius/1000}km Radius</h4>
-            <div className="mapControls">
-              <label>
-                Radius: 
-                <input
-                  type="range"
-                  min="500"
-                  max="5000"
-                  step="100"
-                  value={radius}
-                  onChange={(e) => setRadius(Number(e.target.value))}
-                />
-                {radius/1000} km
-              </label>
-              {userLocation && (
-                <button 
-                  onClick={() => setMapCenter(userLocation)}
-                  className="locationButton"
-                >
-                  Reset to My Location
-                </button>
-              )}
-            </div>
-            
-            <div className="mapContainer">
-              <MapContainer 
-                center={mapCenter} 
-                zoom={15} 
-                style={{ height: '400px', width: '100%' }}
-              >
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                
-                {/* Draw radius circle */}
-                <Circle 
-                  center={mapCenter} 
-                  radius={radius} 
-                  color="blue" 
-                  fillOpacity={0.1} 
-                />
-                
-                {/* Plot admin's location */}
-                {userLocation && (
-                  <Marker position={[userLocation.lat, userLocation.lng]}>
-                    <Popup>Your Location</Popup>
-                  </Marker>
-                )}
-                
-                {/* Plot KYC request markers */}
-                {kycRequests.map((request, index) => {
-                  if (!request.location) return null;
-                  return (
-                    <Marker 
-                      key={index} 
-                      position={[request.location.lat, request.location.lng]}
-                    >
-                      <Popup>
-                        <div>
-                          <strong>{request.name}</strong>
-                          <p>Phone: {request.phoneNumber}</p>
-                          <p>Document: {request.documentType}</p>
-                          <p>Status: {request.status}</p>
-                          <div className="popupActions">
-                            <button 
-                              onClick={() => handleApproveWithLocationCheck(index)}
-                              className="approveButton"
-                              disabled={request.status !== 'Pending'}
-                            >
-                              Approve
-                            </button>
-                            <button 
-                              onClick={() => onReject(index)}
-                              className="rejectButton"
-                              disabled={request.status !== 'Pending'}
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  );
-                })}
-              </MapContainer>
-            </div>
-          </div>
-          
-          {/* KYC Requests Table */}
           {kycRequests.length === 0 ? (
             <p>No pending KYC requests.</p>
           ) : (
@@ -418,6 +369,12 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                       </td>
                       <td>{request.status}</td>
                       <td className="actionButtons">
+                        <button 
+                          onClick={() => viewKYCDocuments(request)} 
+                          className="infoButton"
+                        >
+                          View Documents
+                        </button>
                         <button 
                           onClick={() => handleApproveWithLocationCheck(index)} 
                           className="approveButton"
@@ -456,7 +413,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                   <th>User</th>
                   <th>Amount</th>
                   <th>Date</th>
-                  <th>Cluster Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -468,26 +424,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                     <td>{tx.user}</td>
                     <td>{tx.amount}</td>
                     <td>{tx.date}</td>
-                    <td>
-                      {tx.clusters_info ? (
-                        tx.clusters_info.this_transaction_is_in_cluster ? (
-                          <span className={tx.clusters_info.transaction_cluster_number.includes('4') || 
-                                          tx.clusters_info.transaction_cluster_number.includes('5') ? 
-                                          'suspiciousText' : 'normalText'}>
-                            {tx.clusters_info.transaction_cluster_number}
-                          </span>
-                        ) : 'No cluster'
-                      ) : 'No data'}
-                    </td>
                     <td className="actionButtons">
-                      <button 
-                        onClick={() => {
-                          setSelectedTransaction(tx);
-                        }} 
-                        className="infoButton"
-                      >
-                        Details
-                      </button>
                       <button 
                         onClick={() => handleApproveTransaction(tx.id)} 
                         className="approveButton"
@@ -507,42 +444,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
             </table>
           )}
           
-          {selectedTransaction && (
-            <div className="transactionDetailsModal">
-              <div className="modalContent">
-                <h3>Transaction Details</h3>
-                <p><strong>ID:</strong> {selectedTransaction.id}</p>
-                <p><strong>Type:</strong> {selectedTransaction.type}</p>
-                <p><strong>User:</strong> {selectedTransaction.user}</p>
-                <p><strong>Amount:</strong> {selectedTransaction.amount}</p>
-                <p><strong>Date:</strong> {selectedTransaction.date}</p>
-                
-                {selectedTransaction.clusters_info && renderClusterInfo(selectedTransaction.clusters_info)}
-                
-                <div className="modalButtons">
-                  <button 
-                    onClick={() => handleApproveTransaction(selectedTransaction.id)}
-                    className="approveButton"
-                  >
-                    Approve
-                  </button>
-                  <button 
-                    onClick={() => handleRejectTransaction(selectedTransaction.id)}
-                    className="rejectButton"
-                  >
-                    Reject
-                  </button>
-                  <button 
-                    onClick={() => setSelectedTransaction(null)}
-                    className="closeButton"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          
           <h3>Transaction History</h3>
           {transactions.filter(tx => tx.status !== 'Pending').length === 0 ? (
             <p>No transaction history.</p>
@@ -556,7 +457,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                   <th>Amount</th>
                   <th>Status</th>
                   <th>Date</th>
-                  <th>Cluster Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -570,17 +470,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                       {tx.status}
                     </td>
                     <td>{tx.date}</td>
-                    <td>
-                      {tx.clusters_info ? (
-                        tx.clusters_info.this_transaction_is_in_cluster ? (
-                          <span className={tx.clusters_info.transaction_cluster_number.includes('4') || 
-                                          tx.clusters_info.transaction_cluster_number.includes('5') ? 
-                                          'suspiciousText' : 'normalText'}>
-                            {tx.clusters_info.transaction_cluster_number}
-                          </span>
-                        ) : 'No cluster'
-                      ) : 'No data'}
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -665,6 +554,177 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
               </tbody>
             </table>
           )}
+        </div>
+      )}
+      
+      {activeTab === 'clusters' && (
+        <div className="adminTabContent">
+          <h3>Transaction Clusters</h3>
+          
+          <div className="mapSection">
+            <h4>Transaction Clusters within {radius/1000}km Radius</h4>
+            <div className="mapControls">
+              <label>
+                Radius: 
+                <input
+                  type="range"
+                  min="500"
+                  max="5000"
+                  step="100"
+                  value={radius}
+                  onChange={(e) => setRadius(Number(e.target.value))}
+                />
+                {radius/1000} km
+              </label>
+              {userLocation && (
+                <button 
+                  onClick={() => setMapCenter(userLocation)}
+                  className="locationButton"
+                >
+                  Reset to My Location
+                </button>
+              )}
+            </div>
+            
+            <div className="mapContainer">
+              <MapContainer 
+                key={mapKey}
+                center={mapCenter} 
+                zoom={15} 
+                style={{ height: '400px', width: '100%' }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                
+                <Circle 
+                  center={mapCenter} 
+                  radius={radius} 
+                  color="blue" 
+                  fillOpacity={0.1} 
+                />
+                
+                {userLocation && (
+                  <Marker position={[userLocation.lat, userLocation.lng]}>
+                    <Popup>Your Location</Popup>
+                  </Marker>
+                )}
+                
+                {allClusters.map((cluster, index) => (
+                  <Circle
+                    key={index}
+                    center={[cluster.latitude_center, cluster.longitude_center]}
+                    radius={cluster.radius_km * 1000}
+                    color={cluster.is_suspicious ? 'red' : 'green'}
+                    fillOpacity={0.2}
+                  >
+                    <Popup>
+                      <div>
+                        <strong>{cluster.clusterKey.replace('_info', '').toUpperCase()}</strong>
+                        <p>Density: {cluster.density_per_km2} transactions/km²</p>
+                        <p>Radius: {cluster.radius_km} km</p>
+                        <p>Transactions: {cluster.transaction_count}</p>
+                        <p>Status: 
+                          <span className={cluster.is_suspicious ? 'suspiciousText' : 'normalText'}>
+                            {cluster.is_suspicious ? 'SUSPICIOUS' : 'Normal'}
+                          </span>
+                        </p>
+                        {cluster.is_suspicious && (
+                          <p>Reason: {cluster.suspicious_reason}</p>
+                        )}
+                        <p>Source Transaction: {cluster.sourceTransaction}</p>
+                      </div>
+                    </Popup>
+                  </Circle>
+                ))}
+              </MapContainer>
+            </div>
+          </div>
+          
+          <h4>All Clusters</h4>
+          {allClusters.length === 0 ? (
+            <p>No clusters found.</p>
+          ) : (
+            <table className="adminTable">
+              <thead>
+                <tr>
+                  <th>Cluster</th>
+                  <th>Density</th>
+                  <th>Location</th>
+                  <th>Radius</th>
+                  <th>Transactions</th>
+                  <th>Status</th>
+                  <th>Source TX</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allClusters.map((cluster, index) => (
+                  <tr key={index} className={cluster.is_suspicious ? 'suspiciousRow' : ''}>
+                    <td>{cluster.clusterKey.replace('_info', '').toUpperCase()}</td>
+                    <td>{cluster.density_per_km2} transactions/km²</td>
+                    <td>
+                      {cluster.latitude_center.toFixed(6)}, {cluster.longitude_center.toFixed(6)}
+                    </td>
+                    <td>{cluster.radius_km} km</td>
+                    <td>{cluster.transaction_count}</td>
+                    <td>
+                      <span className={cluster.is_suspicious ? 'suspiciousText' : 'normalText'}>
+                        {cluster.is_suspicious ? 'SUSPICIOUS' : 'Normal'}
+                      </span>
+                    </td>
+                    <td>{cluster.sourceTransaction}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+      
+      {selectedKYCRequest && (
+        <div className="modalBackdrop">
+          <div className="kycDocumentsModal">
+            <h3>KYC Documents for {selectedKYCRequest.name}</h3>
+            <div className="documentGrid">
+              <div className="documentItem">
+                <h4>Selfie with ID</h4>
+                <img 
+                  src={`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/uploads/${selectedKYCRequest.selfie}`} 
+                  alt="Selfie with ID" 
+                />
+              </div>
+              <div className="documentItem">
+                <h4>ID Front</h4>
+                <img 
+                  src={`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/uploads/${selectedKYCRequest.idFront}`} 
+                  alt="ID Front" 
+                />
+              </div>
+              <div className="documentItem">
+                <h4>ID Back</h4>
+                <img 
+                  src={`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/uploads/${selectedKYCRequest.idBack}`} 
+                  alt="ID Back" 
+                />
+              </div>
+              <div className="documentItem">
+                <h4>Utility Bill</h4>
+                <img 
+                  src={`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'}/uploads/${selectedKYCRequest.utilityBill}`} 
+                  alt="Utility Bill" 
+                />
+              </div>
+            </div>
+            <div className="modalActions">
+              <button 
+                onClick={() => setSelectedKYCRequest(null)}
+                className="closeButton"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
       

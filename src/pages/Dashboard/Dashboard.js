@@ -108,18 +108,6 @@ const Dashboard = () => {
         }
     }, [authState, navigate]);
 
-    // Error handling utility function
-    const handleApiError = (error, defaultMessage) => {
-        const errorMessage = error.response?.data?.message || 
-                          error.message || 
-                          defaultMessage;
-        setNotification(errorMessage);
-        
-        if (process.env.REACT_APP_DEBUG === 'true') {
-            console.error('API Error:', error);
-        }
-    };
-
     // Initialize 2FA status from backend
     useEffect(() => {
         const check2FAStatus = async () => {
@@ -183,6 +171,18 @@ const Dashboard = () => {
     const handleSessionExpiredClose = () => {
         setIsSessionExpired(false);
         window.location.href = '/login';
+    };
+
+    // Error handling utility function
+    const handleApiError = (error, defaultMessage) => {
+        const errorMessage = error.response?.data?.message || 
+                            error.message || 
+                            defaultMessage;
+        setNotification(errorMessage);
+        
+        if (process.env.REACT_APP_DEBUG === 'true') {
+            console.error('API Error:', error);
+        }
     };
 
     const handleTransfer = async () => {
@@ -288,7 +288,7 @@ const Dashboard = () => {
 
     const handleDeposit = async () => {
         updateLastActivityTime();
-        if (!depositAmount ) {
+        if (!depositAmount) {
             setNotification("Please fill all fields.");
             return;
         }
@@ -329,7 +329,7 @@ const Dashboard = () => {
 
     const handleWithdraw = async () => {
         updateLastActivityTime();
-        if (!withdrawAmount ) {
+        if (!withdrawAmount) {
             setNotification("Please fill all fields.");
             return;
         }
