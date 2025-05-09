@@ -25,6 +25,7 @@ const App = () => {
 
   const handleLogin = (kycVerificaionStatus) => {
     setIsLoggedIn(true);
+    console.log(kycVerificaionStatus)
     setKycVerificaionStatus(kycVerificaionStatus)
   };
 

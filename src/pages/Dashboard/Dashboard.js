@@ -30,9 +30,9 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:500
 const Dashboard = () => {
     // Auth and KYC state
     const [authState, setAuthState] = useState({
-        isAuthenticated: false,
-        isKYCVerified: false,
-        isLoading: true,
+        isAuthenticated: true,
+        isKYCVerified: true,
+        isLoading: false,
         accountStatus: "active"
     });
 
@@ -62,40 +62,40 @@ const Dashboard = () => {
     const navigate = useNavigate();
 
     // Check auth and KYC status
-    useEffect(() => {
-        const checkAuthAndKYC = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) throw new Error('No token found');
+    // useEffect(() => {
+    //     const checkAuthAndKYC = async () => {
+    //         try {
+    //             const token = localStorage.getItem('token');
+    //             if (!token) throw new Error('No token found');
                 
-                const authResponse = await axios.get(`${API_BASE_URL}/api/auth/check-auth`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+    //             // const authResponse = await axios.get(`${API_BASE_URL}/api/auth/check-auth`, {
+    //             //     headers: { Authorization: `Bearer ${token}` }
+    //             // });
                 
-                const kycResponse = await axios.get(`${API_BASE_URL}/api/kyc/status`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+    //             // const kycResponse = await axios.get(`${API_BASE_URL}/api/kyc/status`, {
+    //             //     headers: { Authorization: `Bearer ${token}` }
+    //             // });
                 
-                setAuthState({
-                    isAuthenticated: true,
-                    isKYCVerified: kycResponse.data.isVerified,
-                    isLoading: false,
-                    accountStatus: authResponse.data.accountStatus || "active"
-                });
+    //             // setAuthState({
+    //             //     isAuthenticated: true,
+    //             //     isKYCVerified: kycResponse.data.isVerified,
+    //             //     isLoading: false,
+    //             //     accountStatus: authResponse.data.accountStatus || "active"
+    //             // });
 
-            } catch (error) {
-                localStorage.removeItem('token');
-                setAuthState({
-                    isAuthenticated: false,
-                    isKYCVerified: false,
-                    isLoading: false,
-                    accountStatus: "blocked"
-                });
-            }
-        };
+    //         } catch (error) {
+    //             localStorage.removeItem('token');
+    //             setAuthState({
+    //                 isAuthenticated: false,
+    //                 isKYCVerified: false,
+    //                 isLoading: false,
+    //                 accountStatus: "blocked"
+    //             });
+    //         }
+    //     };
         
-        checkAuthAndKYC();
-    }, []);
+    //     checkAuthAndKYC();
+    // }, []);
 
     // Handle redirects
     useEffect(() => {

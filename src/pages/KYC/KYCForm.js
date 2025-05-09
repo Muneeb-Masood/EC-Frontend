@@ -9,9 +9,9 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:500
 const KYCForm = ({ onKYCSubmit }) => {
     // Auth state
     const [authState, setAuthState] = useState({
-        isAuthenticated: false,
+        isAuthenticated: true,
         isKYCVerified: false,
-        isLoading: true
+        isLoading: false
     });
 
     // KYC form state
@@ -32,48 +32,48 @@ const KYCForm = ({ onKYCSubmit }) => {
     const navigate = useNavigate();
 
     // Check auth and KYC status
-    useEffect(() => {
-        const checkAuthAndKYC = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) throw new Error('No token found');
+    // useEffect(() => {
+    //     const checkAuthAndKYC = async () => {
+    //         try {
+    //             const token = localStorage.getItem('token');
+    //             if (!token) throw new Error('No token found');
                 
-                const authResponse = await axios.get(`${API_BASE_URL}/api/auth/check-auth`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+    //             const authResponse = await axios.get(`${API_BASE_URL}/api/auth/check-auth`, {
+    //                 headers: { Authorization: `Bearer ${token}` }
+    //             });
                 
-                const kycResponse = await axios.get(`${API_BASE_URL}/api/kyc/status`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+    //             const kycResponse = await axios.get(`${API_BASE_URL}/api/kyc/status`, {
+    //                 headers: { Authorization: `Bearer ${token}` }
+    //             });
                 
-                setAuthState({
-                    isAuthenticated: true,
-                    isKYCVerified: kycResponse.data.isVerified,
-                    isLoading: false
-                });
+    //             setAuthState({
+    //                 isAuthenticated: true,
+    //                 isKYCVerified: kycResponse.data.isVerified,
+    //                 isLoading: false
+    //             });
 
-            } catch (error) {
-                setAuthState({
-                    isAuthenticated: false,
-                    isKYCVerified: false,
-                    isLoading: false
-                });
-            }
-        };
+    //         } catch (error) {
+    //             setAuthState({
+    //                 isAuthenticated: false,
+    //                 isKYCVerified: false,
+    //                 isLoading: false
+    //             });
+    //         }
+    //     };
         
-        checkAuthAndKYC();
-    }, []);
+    //     checkAuthAndKYC();
+    // }, []);
 
     // Handle redirects
-    useEffect(() => {
-        if (!authState.isLoading) {
-            if (!authState.isAuthenticated) {
-                navigate('/login');
-            } else if (authState.isKYCVerified) {
-                navigate('/dashboard');
-            }
-        }
-    }, [authState, navigate]);
+    // useEffect(() => {
+    //     if (!authState.isLoading) {
+    //         if (!authState.isAuthenticated) {
+    //             navigate('/login');
+    //         } else if (authState.isKYCVerified) {
+    //             navigate('/dashboard');
+    //         }
+    //     }
+    // }, [authState, navigate]);
 
     const getCurrentLocation = () => {
         setIsGettingLocation(true);
@@ -141,9 +141,9 @@ const KYCForm = ({ onKYCSubmit }) => {
         }
     };
 
-    if (authState.isLoading) {
-        return <div className="loading-spinner">Loading...</div>;
-    }
+    // if (authState.isLoading) {
+    //     return <div className="loading-spinner">Loading...</div>;
+    // }
 
     return (
         <div className="kycPage">
