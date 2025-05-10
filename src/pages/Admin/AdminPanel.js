@@ -1,22 +1,20 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import "../../styles.css";
 import Notification from '../../components/Notification/Notification';
-
-
+import apiRequest from "../../utils/helper_function";
 // Admin Panel Component
-const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
+const AdminPanel = ({kycRequests ,onApprove, openRejectModal }) => {
+
+    // const [showRejectModal, setShowRejectModal] = useState(false);
+    // const [rejectionReason, setRejectionReason] = useState('');
+
     const [activeTab, setActiveTab] = useState('kyc');
     const [transactions, setTransactions] = useState([
       { id: 1, type: 'Withdrawal', user: 'user1@example.com', amount: '0.5 ETH', status: 'Pending', date: '2023-05-15 14:30' },
       { id: 2, type: 'Deposit', user: 'user2@example.com', amount: '1000 USD', status: 'Pending', date: '2023-05-15 15:45' },
       { id: 3, type: 'Transfer', user: 'user3@example.com', amount: '1.2 ETH', status: 'Pending', date: '2023-05-16 09:15' },
     ]);
-    
-    const [deposits, setDeposits] = useState([
-      { id: 1, user: 'user4@example.com', amount: '500 USD', bankAccount: '****1234', status: 'Pending', date: '2023-05-14 11:20' },
-      { id: 2, user: 'user5@example.com', amount: '750 USD', bankAccount: '****5678', status: 'Pending', date: '2023-05-15 16:30' },
-    ]);
-    
+
     const [notification, setNotification] = useState(null);
   
     const handleApproveTransaction = (id) => {
@@ -31,20 +29,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
         tx.id === id ? { ...tx, status: 'Rejected' } : tx
       ));
       setNotification({ type: 'error', message: 'Transaction rejected.' });
-    };
-  
-    const handleApproveDeposit = (id) => {
-      setDeposits(deposits.map(deposit => 
-        deposit.id === id ? { ...deposit, status: 'Approved' } : deposit
-      ));
-      setNotification({ type: 'success', message: 'Deposit approved successfully!' });
-    };
-  
-    const handleRejectDeposit = (id) => {
-      setDeposits(deposits.map(deposit => 
-        deposit.id === id ? { ...deposit, status: 'Rejected' } : deposit
-      ));
-      setNotification({ type: 'error', message: 'Deposit rejected.' });
     };
   
     return (
@@ -72,12 +56,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
           >
             Transaction Approvals
           </button>
-          <button
-            className={`adminTab ${activeTab === 'deposits' ? 'activeAdminTab' : ''}`}
-            onClick={() => setActiveTab('deposits')}
-          >
-            Deposit Approvals
-          </button>
         </div>
         
         {activeTab === 'kyc' && (
@@ -92,6 +70,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                     <th>Name</th>
                     <th>Phone Number</th>
                     <th>Document Type</th>
+                    <th>Document Link</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
@@ -102,19 +81,31 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                       <td>{request.name}</td>
                       <td>{request.phoneNumber}</td>
                       <td>{request.documentType}</td>
-                      <td>{request.status}</td>
+                          <td className="viewDocument">
+                            <a
+                              href={request.documentReference}
+                              target="_blank"
+                            >
+                              View Document
+                            </a>
+                          </td>     
+                        <td>{request.verificationStatus}</td>
                       <td className="actionButtons">
                         <button 
-                          onClick={() => onApprove(index)} 
+                          onClick={() => onApprove(request.kycID)} 
                           className="approveButton"
-                          disabled={request.status !== 'Pending'}
+                          disabled={request.verificationStatus !== 'pending'}
                         >
                           Approve
                         </button>
                         <button 
-                          onClick={() => onReject(index)} 
+                          onClick={() =>  {
+                            console.log("Button is pressend")
+                            console.log("Id is " ,  request.kycID);
+                            openRejectModal(request.kycID)
+                          } }
                           className="rejectButton"
-                          disabled={request.status !== 'Pending'}
+                          disabled={request.verificationStatus !== 'pending'}
                         >
                           Reject
                         </button>
@@ -205,86 +196,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
             )}
           </div>
         )}
-        
-        {activeTab === 'deposits' && (
-          <div className="adminTabContent">
-            <h3>Pending Deposits</h3>
-            {deposits.filter(deposit => deposit.status === 'Pending').length === 0 ? (
-              <p>No pending deposits.</p>
-            ) : (
-              <table className="adminTable">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Amount</th>
-                    <th>Bank Account</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {deposits.filter(deposit => deposit.status === 'Pending').map(deposit => (
-                    <tr key={deposit.id}>
-                      <td>{deposit.id}</td>
-                      <td>{deposit.user}</td>
-                      <td>{deposit.amount}</td>
-                      <td>{deposit.bankAccount}</td>
-                      <td>{deposit.date}</td>
-                      <td className="actionButtons">
-                        <button 
-                          onClick={() => handleApproveDeposit(deposit.id)} 
-                          className="approveButton"
-                        >
-                          Approve
-                        </button>
-                        <button 
-                          onClick={() => handleRejectDeposit(deposit.id)} 
-                          className="rejectButton"
-                        >
-                          Reject
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-            
-            <h3>Deposit History</h3>
-            {deposits.filter(deposit => deposit.status !== 'Pending').length === 0 ? (
-              <p>No deposit history.</p>
-            ) : (
-              <table className="adminTable">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Amount</th>
-                    <th>Bank Account</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {deposits.filter(deposit => deposit.status !== 'Pending').map(deposit => (
-                    <tr key={deposit.id}>
-                      <td>{deposit.id}</td>
-                      <td>{deposit.user}</td>
-                      <td>{deposit.amount}</td>
-                      <td>{deposit.bankAccount}</td>
-                      <td className={deposit.status === 'Approved' ? 'statusApproved' : 'statusRejected'}>
-                        {deposit.status}
-                      </td>
-                      <td>{deposit.date}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
-        
         <div className="adminFooter">
           <p>© 2025 Zentron. All rights reserved.</p>
           <p>

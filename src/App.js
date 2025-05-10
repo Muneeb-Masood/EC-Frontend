@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import "./styles.css";
 import HomePage from "./pages/Home/HomePage";
@@ -17,14 +17,44 @@ import genericErrorMessage from "./constant";
 import baseUrl from "./constant";
 
 const App = () => {
+
+  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-  const [isKYCSubmitted, setIsKYCSubmitted] = useState(false);
+  const [isKYCSubmitted, setIsKYCSubmitted] = useState(true);
   const [user, setUser] = useState(null);
   const [kycRequests, setKycRequests] = useState([]);
   const [kycStatus, setKycStatus] = useState("Pending");
   const [accountStatus, setAccountStatus] = useState("active");
   const {displayMessage , setDisplayMessage} = useMessage();
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [selectedKycID , setSelectedKycID] = useState();
+    
+
+
+  useEffect(() => {
+      const fetchKycRequests = async () => {
+        try {
+          const response = await apiRequest('GET', 'http://localhost:5000/api/getKyc');
+          
+        if (Array.isArray(response.data.kycRequests)) {
+          const pendingRequests = response.data.kycRequests.filter(
+          request => request.verificationStatus === 'pending'
+        );
+        setKycRequests(pendingRequests); 
+      } else {
+        setDisplayMessage({ type: 'error', message: 'KYC data is not in the expected format.' });
+      }
+        } catch (error) {
+          setDisplayMessage({ type: 'error', message: 'Error fetching KYC requests.' });
+        }
+  
+      };
+                  fetchKycRequests();  
+  
+    } , []);
+  
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -66,19 +96,66 @@ const App = () => {
     
   };
 
-  const handleApprove = (index) => {
-    const updatedRequests = [...kycRequests];
-    updatedRequests[index].status = "Approved";
+  const handleApproveKYC = async (kycID) => {
+    console.log(kycID);
+  const response = await apiRequest('POST', 'http://localhost:5000/api/kyc/approve', { kycID });
+
+  if (response.success) {
+
+    const updatedRequests = kycRequests.filter(request => request.kycID !== kycID);
     setKycRequests(updatedRequests);
     setKycStatus("Approved");
-  };
+    setDisplayMessage("KYC Approved Successfully");
+  } else {
 
-  const handleReject = (index) => {
-    const updatedRequests = [...kycRequests];
-    updatedRequests[index].status = "Rejected";
+  }
+};
+
+const submitRejection = async () => {
+  if (!rejectionReason.trim()) return;
+
+  const response = await apiRequest('POST', 'http://localhost:5000/api/kyc/reject', {
+    kycID: selectedKycID,
+    rejectionReason: rejectionReason
+  });
+  console.log("From 121");
+  console.log(response);
+  if (response.success) {
+    const updatedRequests = kycRequests.filter(req => req._id !== selectedKycID);
     setKycRequests(updatedRequests);
     setKycStatus("Rejected");
-  };
+    setShowRejectModal(false);
+    setRejectionReason('');
+  } else {
+  }
+};
+
+const openRejectModal = (kycID) => {
+  setSelectedKycID(kycID);
+  setShowRejectModal(true);
+};
+
+
+
+const handleReject = async (kycID) => {
+  try {
+    const response = await apiRequest('POST', 'http://localhost:5000/api/kyc/reject', { kycID });
+    console.log(response);
+
+    if (response.success) {
+
+      const updatedRequests = kycRequests.filter(request => request.kycID !== kycID);
+      setKycRequests(updatedRequests);
+      setKycStatus("Rejected");
+      setDisplayMessage({ type: 'success', message: 'KYC rejected successfully!' });
+    } else {
+      setDisplayMessage({ type: 'error', message: 'Failed to reject KYC.' });
+    }
+  } catch (error) {
+    setDisplayMessage({ type: 'error', message: 'An error occurred while rejecting KYC.' });
+  }
+};
+
 
   return (
     <Router>
@@ -91,9 +168,34 @@ const App = () => {
           <Route path="/signup" element={isLoggedIn ? <Navigate to="/kyc" /> : <SignupPage onSignup={handleSignup} />} />
           <Route path="/kyc" element={isKYCSubmitted ? <Navigate to="/dashboard" /> : isLoggedIn ? <KYCForm onKYCSubmit={handleKYCSubmit} /> : <Navigate to="/login" />} />
           <Route path="/dashboard" element={isKYCSubmitted ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} /> : <Navigate to="/login" />} />
-          <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApprove} onReject={handleReject} /> : <Navigate to="/admin-login" />} />
+          <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApproveKYC} openRejectModal={openRejectModal} 
+          /> : <Navigate to="/admin-login" />} />
+          
           <Route path="/support" element={<SupportPage />} />
         </Routes>
+        {showRejectModal && (
+  <div className="modalOverlay">
+    <div className="modalContent">
+      <div className="modalHeader">Reject KYC Request</div>
+      <textarea
+        className="modalTextarea"
+        placeholder="Enter rejection reason..."
+        value={rejectionReason}
+        onChange={(e) => setRejectionReason(e.target.value)}
+        rows={4}
+      />
+      <div className="modalButtons">
+        <button className="modalButton rejectConfirm" onClick={submitRejection}>
+          Submit
+        </button>
+        <button className="modalButton cancelModal" onClick={() => setShowRejectModal(false)}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       </div>
     </Router>
   );

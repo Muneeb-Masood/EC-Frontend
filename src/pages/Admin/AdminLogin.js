@@ -13,7 +13,7 @@ const AdminLogin = ({ onAdminLogin }) => {
         setError("Please fill in all fields.");
         return;
       }
-      if (username === "admin" && password === "admin123") {
+      if (username === "a" && password === "a") {
         onAdminLogin();
         // Clear fields after successful login
         setUsername("");
