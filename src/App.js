@@ -31,6 +31,10 @@ const App = () => {
     setKycVerificaionStatus(kycVerificaionStatus)
   };
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
   const handleAdminLogin = () => {
     setIsAdminLoggedIn(true);
   };
@@ -65,13 +69,13 @@ const App = () => {
       <div className="app">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={isLoggedIn ? <Navigate to="/kyc" /> : <LoginPage onLogin={handleLogin} />} />
+          <Route path="/login" element={isLoggedIn ? <Navigate to="/kyc" /> : <LoginPage onLogin={handleLogin}/>} />
           <Route path="/admin-login" element={isAdminLoggedIn ? <Navigate to="/admin" /> : <AdminLogin onAdminLogin={handleAdminLogin} />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/signup" element={isLoggedIn ? <Navigate to="/kyc" /> : <SignupPage onSignup={handleSignup} />} />
           {/* <Route path="/verify-email" element={<VerifyEmailPage />} /> */}
           <Route path="/kyc" element={kycVerificaionStatus === 'verified' ? <Navigate to="/dashboard" /> : isLoggedIn ? <KYCForm onKYCSubmit={handleKYCSubmit} kycVerificaionStatus={kycVerificaionStatus}/> : <Navigate to="/login" />} />
-          <Route path="/dashboard" element={kycVerificaionStatus === 'verified' ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} /> : <Navigate to="/login" />} />
+          <Route path="/dashboard" element={kycVerificaionStatus === 'verified' ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} onLogout={handleLogout}/> : <Navigate to="/login" />} />
           <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApprove} onReject={handleReject} /> : <Navigate to="/admin-login" />} />
           <Route path="/support" element={<SupportPage />} />
         </Routes>

@@ -27,7 +27,7 @@ import withdrawIcon from '../../assets/withdraw-icon.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
-const Dashboard = () => {
+const Dashboard = ({onLogout}) => {
     // Auth and KYC state
     const [authState, setAuthState] = useState({
         isAuthenticated: true,
@@ -57,6 +57,7 @@ const Dashboard = () => {
     const [isSessionExpired, setIsSessionExpired] = useState(false);
     const [lastActivityTime, setLastActivityTime] = useState(Date.now());
     const [isUpdating2FA, setIsUpdating2FA] = useState(false);
+    const [walletAddress, setWalletAddress] = useState(null)
 
     const ETH_TO_USD_RATE = 2000;
     const navigate = useNavigate();
@@ -124,6 +125,28 @@ const Dashboard = () => {
         };
         
         check2FAStatus();
+
+        const getWalletAddress = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(
+                    `${API_BASE_URL}/api/WalletAddress`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`   
+                        }
+                    }
+                );
+        
+                if (response.data) {
+                    setWalletAddress(response.data.walletAddress)
+                } 
+            } catch (error) {
+                handleApiError(error, "Cannot fetch Wallet Address");
+            }
+        }
+
+        getWalletAddress();
     }, []);
 
     // Track user activity
@@ -406,6 +429,27 @@ const Dashboard = () => {
             setIsUpdating2FA(false);
         }
     };
+
+
+    const copyWalletAddress = async () => {
+        try {
+            await navigator.clipboard.writeText(walletAddress);
+            setNotification("Wallet Address copied to clipboard");
+          } catch (err) {
+            console.error('Failed to copy: ', err);
+          }
+    }
+
+    const logout = async () => {
+        try {
+            localStorage.removeItem('token')
+            setNotification("Successfully Logout from this device");
+            navigate('/');
+            onLogout();
+        } catch (err) {
+            console.error('Error', err);
+        }
+    }
 
     if (authState.isLoading) {
         return <div className="loading-spinner">Loading...</div>;
@@ -870,6 +914,28 @@ const Dashboard = () => {
                                 <div className="toggleSlider"></div>
                             </div>
                         </div>
+
+                        <div className="settingItem">
+                            <label>Wallet Address</label>
+                            <div
+                                className="copyAddressButton"
+                                onClick={copyWalletAddress}
+                                
+                            >
+                               {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                            </div>
+                        </div>
+
+                        <div className="settingItem">
+                            <div
+                                className="logout"
+                                onClick={logout}
+                                
+                            >
+                                Logout
+                            </div>
+                        </div>
+                        
                     </div>
                 )}
             </div>
