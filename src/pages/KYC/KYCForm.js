@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import "../../styles.css";
-import "../../components/Notification/Notification";
+import '../../components/Notification/Notification';
+import {useMessage } from "../../context/MessageContext";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 

@@ -1,6 +1,6 @@
 // src/App.js
-import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import React, { useState , useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import "./styles.css";
 import HomePage from "./pages/Home/HomePage";
 import LoginPage from "./pages/Auth/Login/LoginPage";
@@ -11,11 +11,14 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import SupportPage from "./pages/Support/SupportPage";
 import KYCForm from "./pages/KYC/KYCForm";
-// import VerifyEmailPage from "./pages/Auth/VerifyEmailPage/VerifyEmailPage";
-
+import apiRequest from "./utils/helper_function";
+import { useMessage } from "./context/MessageContext";
+import genericErrorMessage from "./constant";
+import baseUrl from "./constant";
 
 const App = () => {
-  // const navigate = useNavigate();
+
+  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [isKYCSubmitted, setIsKYCSubmitted] = useState(false);
@@ -23,7 +26,37 @@ const App = () => {
   const [kycRequests, setKycRequests] = useState([]);
   const [kycStatus, setKycStatus] = useState("Pending");
   const [accountStatus, setAccountStatus] = useState("active");
+  const {displayMessage , setDisplayMessage} = useMessage();
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [selectedKycID , setSelectedKycID] = useState();
   const [kycVerificaionStatus, setKycVerificaionStatus] = useState(null)
+
+    
+
+
+  useEffect(() => {
+      const fetchKycRequests = async () => {
+        try {
+          const response = await apiRequest('GET', 'http://localhost:5000/api/getKyc');
+          
+        if (Array.isArray(response.data.kycRequests)) {
+          const pendingRequests = response.data.kycRequests.filter(
+          request => request.verificationStatus === 'pending'
+        );
+        setKycRequests(pendingRequests); 
+      } else {
+        setDisplayMessage({ type: 'error', message: 'KYC data is not in the expected format.' });
+      }
+        } catch (error) {
+          setDisplayMessage({ type: 'error', message: 'Error fetching KYC requests.' });
+        }
+  
+      };
+                  fetchKycRequests();  
+  
+    } , []);
+  
 
   const handleLogin = (kycVerificaionStatus) => {
     setIsLoggedIn(true);
@@ -45,24 +78,93 @@ const App = () => {
 
   };
 
-  const handleKYCSubmit = (kycData) => {
-    setKycRequests([...kycRequests, { ...kycData, status: "Pending" }]);
+  const handleKYCSubmit = async (kycData) => {
+    setDisplayMessage("Dummy Message");
+
+    const formData = new FormData();
+    formData.append("name", kycData.name);
+    formData.append("phoneNumber", kycData.phoneNumber);
+    formData.append("documentType", kycData.documentType);
+    formData.append("document", kycData.document);
+
+    // console.log("From line 50");
+    // console.log(kycData.picture);
+    console.log(kycData.document);
+    setKycRequests(kycData);
+    const result = await apiRequest('POST', 'http://localhost:5000/api/kyc/uploadDocs', formData);
+    if(result.success){
+      setTimeout(() => {
+        setIsKYCSubmitted(true);
+      }, 2000);
+      return;
+    }
+
+    setDisplayMessage(genericErrorMessage);
     setIsKYCSubmitted(true);
+
+    
   };
 
-  const handleApprove = (index) => {
-    const updatedRequests = [...kycRequests];
-    updatedRequests[index].status = "Approved";
+  const handleApproveKYC = async (kycID) => {
+    console.log(kycID);
+  const response = await apiRequest('POST', 'http://localhost:5000/api/kyc/approve', { kycID });
+
+  if (response.success) {
+
+    const updatedRequests = kycRequests.filter(request => request.kycID !== kycID);
     setKycRequests(updatedRequests);
     setKycStatus("Approved");
-  };
+    setDisplayMessage("KYC Approved Successfully");
+  } else {
 
-  const handleReject = (index) => {
-    const updatedRequests = [...kycRequests];
-    updatedRequests[index].status = "Rejected";
+  }
+};
+
+const submitRejection = async () => {
+  if (!rejectionReason.trim()) return;
+
+  const response = await apiRequest('POST', 'http://localhost:5000/api/kyc/reject', {
+    kycID: selectedKycID,
+    rejectionReason: rejectionReason
+  });
+  console.log("From 121");
+  console.log(response);
+  if (response.success) {
+    const updatedRequests = kycRequests.filter(req => req._id !== selectedKycID);
     setKycRequests(updatedRequests);
     setKycStatus("Rejected");
-  };
+    setShowRejectModal(false);
+    setRejectionReason('');
+  } else {
+  }
+};
+
+const openRejectModal = (kycID) => {
+  setSelectedKycID(kycID);
+  setShowRejectModal(true);
+};
+
+
+
+const handleReject = async (kycID) => {
+  try {
+    const response = await apiRequest('POST', 'http://localhost:5000/api/kyc/reject', { kycID });
+    console.log(response);
+
+    if (response.success) {
+
+      const updatedRequests = kycRequests.filter(request => request.kycID !== kycID);
+      setKycRequests(updatedRequests);
+      setKycStatus("Rejected");
+      setDisplayMessage({ type: 'success', message: 'KYC rejected successfully!' });
+    } else {
+      setDisplayMessage({ type: 'error', message: 'Failed to reject KYC.' });
+    }
+  } catch (error) {
+    setDisplayMessage({ type: 'error', message: 'An error occurred while rejecting KYC.' });
+  }
+};
+
 
   return (
     <Router>
@@ -79,6 +181,29 @@ const App = () => {
           <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApprove} onReject={handleReject} /> : <Navigate to="/admin-login" />} />
           <Route path="/support" element={<SupportPage />} />
         </Routes>
+        {showRejectModal && (
+  <div className="modalOverlay">
+    <div className="modalContent">
+      <div className="modalHeader">Reject KYC Request</div>
+      <textarea
+        className="modalTextarea"
+        placeholder="Enter rejection reason..."
+        value={rejectionReason}
+        onChange={(e) => setRejectionReason(e.target.value)}
+        rows={4}
+      />
+      <div className="modalButtons">
+        <button className="modalButton rejectConfirm" onClick={submitRejection}>
+          Submit
+        </button>
+        <button className="modalButton cancelModal" onClick={() => setShowRejectModal(false)}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       </div>
     </Router>
   );

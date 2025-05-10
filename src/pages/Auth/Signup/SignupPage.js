@@ -56,7 +56,25 @@ const SignupPage = ({ onSignup }) => {
           phone
         });
   
-        setSuccessMessage("Account created successfully! Please verify on your device to login.");
+        // setShowOtpField(true);
+        setSuccessMessage("Account has been created Sucessfullt");
+      } catch (error) {
+        handleApiError(error, "Signup failed. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    const handleOtpVerification = async () => {
+      if (otp.length !== 4 || isNaN(otp)) {
+        setError("OTP must be a 4-digit number.");
+        return;
+      }
+  
+      setIsLoading(true);
+      
+      try {
+        setSuccessMessage("OTP Verified! Account created successfully.");
         setTimeout(() => {
           onSignup({ email, password, phone });
           resetForm();

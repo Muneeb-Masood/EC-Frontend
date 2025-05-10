@@ -131,6 +131,181 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     };
+  
+    // return (
+    //   <div className="adminPanel">
+    //     <h2 className="heading">Admin Dashboard</h2>
+        
+    //     {notification && (
+    //       <Notification
+    //         message={notification.message}
+    //         onClose={() => setNotification(null)}
+    //         type={notification.type}
+    //       />
+    //     )}
+        
+    //     <div className="adminTabs">
+    //       <button
+    //         className={`adminTab ${activeTab === 'kyc' ? 'activeAdminTab' : ''}`}
+    //         onClick={() => setActiveTab('kyc')}
+    //       >
+    //         KYC Requests
+    //       </button>
+    //       <button
+    //         className={`adminTab ${activeTab === 'transactions' ? 'activeAdminTab' : ''}`}
+    //         onClick={() => setActiveTab('transactions')}
+    //       >
+    //         Transaction Approvals
+    //       </button>
+    //     </div>
+        
+    //     {activeTab === 'kyc' && (
+    //       <div className="adminTabContent">
+    //         <h3>KYC Verification Requests</h3>
+    //         {kycRequests.length === 0 ? (
+    //           <p>No pending KYC requests.</p>
+    //         ) : (
+    //           <table className="adminTable">
+    //             <thead>
+    //               <tr>
+    //                 <th>Name</th>
+    //                 <th>Phone Number</th>
+    //                 <th>Document Type</th>
+    //                 <th>Document Link</th>
+    //                 <th>Status</th>
+    //                 <th>Actions</th>
+    //               </tr>
+    //             </thead>
+    //             <tbody>
+    //               {kycRequests.map((request, index) => (
+    //                 <tr key={index}>
+    //                   <td>{request.name}</td>
+    //                   <td>{request.phoneNumber}</td>
+    //                   <td>{request.documentType}</td>
+    //                       <td className="viewDocument">
+    //                         <a
+    //                           href={request.documentReference}
+    //                           target="_blank"
+    //                         >
+    //                           View Document
+    //                         </a>
+    //                       </td>     
+    //                     <td>{request.verificationStatus}</td>
+    //                   <td className="actionButtons">
+    //                     <button 
+    //                       onClick={() => onApprove(request.kycID)} 
+    //                       className="approveButton"
+    //                       disabled={request.verificationStatus !== 'pending'}
+    //                     >
+    //                       Approve
+    //                     </button>
+    //                     <button 
+    //                       onClick={() =>  {
+    //                         console.log("Button is pressend")
+    //                         console.log("Id is " ,  request.kycID);
+    //                         openRejectModal(request.kycID)
+    //                       } }
+    //                       className="rejectButton"
+    //                       disabled={request.verificationStatus !== 'pending'}
+    //                     >
+    //                       Reject
+    //                     </button>
+    //                   </td>
+    //                 </tr>
+    //               ))}
+    //             </tbody>
+    //           </table>
+    //         )}
+    //       </div>
+    //     )}
+        
+    //     {activeTab === 'transactions' && (
+    //       <div className="adminTabContent">
+    //         <h3>Pending Transactions</h3>
+    //         {transactions.filter(tx => tx.status === 'Pending').length === 0 ? (
+    //           <p>No pending transactions.</p>
+    //         ) : (
+    //           <table className="adminTable">
+    //             <thead>
+    //               <tr>
+    //                 <th>ID</th>
+    //                 <th>Type</th>
+    //                 <th>User</th>
+    //                 <th>Amount</th>
+    //                 <th>Date</th>
+    //                 <th>Actions</th>
+    //               </tr>
+    //             </thead>
+    //             <tbody>
+    //               {transactions.filter(tx => tx.status === 'Pending').map(tx => (
+    //                 <tr key={tx.id}>
+    //                   <td>{tx.id}</td>
+    //                   <td>{tx.type}</td>
+    //                   <td>{tx.user}</td>
+    //                   <td>{tx.amount}</td>
+    //                   <td>{tx.date}</td>
+    //                   <td className="actionButtons">
+    //                     <button 
+    //                       onClick={() => handleApproveTransaction(tx.id)} 
+    //                       className="approveButton"
+    //                     >
+    //                       Approve
+    //                     </button>
+    //                     <button 
+    //                       onClick={() => handleRejectTransaction(tx.id)} 
+    //                       className="rejectButton"
+    //                     >
+    //                       Reject
+    //                     </button>
+    //                   </td>
+    //                 </tr>
+    //               ))}
+    //             </tbody>
+    //           </table>
+    //         )}
+            
+    //         <h3>Transaction History</h3>
+    //         {transactions.filter(tx => tx.status !== 'Pending').length === 0 ? (
+    //           <p>No transaction history.</p>
+    //         ) : (
+    //           <table className="adminTable">
+    //             <thead>
+    //               <tr>
+    //                 <th>ID</th>
+    //                 <th>Type</th>
+    //                 <th>User</th>
+    //                 <th>Amount</th>
+    //                 <th>Status</th>
+    //                 <th>Date</th>
+    //               </tr>
+    //             </thead>
+    //             <tbody>
+    //               {transactions.filter(tx => tx.status !== 'Pending').map(tx => (
+    //                 <tr key={tx.id}>
+    //                   <td>{tx.id}</td>
+    //                   <td>{tx.type}</td>
+    //                   <td>{tx.user}</td>
+    //                   <td>{tx.amount}</td>
+    //                   <td className={tx.status === 'Approved' ? 'statusApproved' : 'statusRejected'}>
+    //                     {tx.status}
+    //                   </td>
+    //                   <td>{tx.date}</td>
+    //                 </tr>
+    //               ))}
+    //             </tbody>
+    //           </table>
+    //         )}
+    //       </div>
+    //     )}
+    //     <div className="adminFooter">
+    //       <p>© 2025 Zentron. All rights reserved.</p>
+    //       <p>
+    //         <a href="#">Terms of Service</a>
+    //         <a href="#">Privacy Policy</a>
+    //         <a href="#">Contact Us</a>
+    //       </p>
+    //     </div>
+    //   </div>)
 
     // Filter requests within radius
     const requestsWithinRadius = kycRequests.filter((request) => {
@@ -420,12 +595,13 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                         <table className="adminTable">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Phone</th>
-                                    <th>Document</th>
-                                    <th>Location</th>
+                                   <th>Name</th>
+                                  <th>Phone Number</th>
+                                  <th>Document Type</th>
+                                  <th>Document Link</th>
+                                   <th>Location</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                  <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -448,6 +624,14 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                                             <td>{request.name}</td>
                                             <td>{request.phoneNumber}</td>
                                             <td>{request.documentType}</td>
+                                            <td className="viewDocument">
+                                                <a
+                                                href={request.documentReference}
+                                                target="_blank"
+                                                >
+                                                View Document
+                                                </a>
+                                            </td>     
                                             <td>
                                                 {request.location ? (
                                                     <span
@@ -479,32 +663,25 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                                                 >
                                                     View Documents
                                                 </button>
-                                                <button
-                                                    onClick={() =>
-                                                        handleApproveWithLocationCheck(
-                                                            index
-                                                        )
-                                                    }
-                                                    className="approveButton"
-                                                    disabled={
-                                                        request.status !==
-                                                        "Pending"
-                                                    }
-                                                >
-                                                    Approve
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        onReject(index)
-                                                    }
-                                                    className="rejectButton"
-                                                    disabled={
-                                                        request.status !==
-                                                        "Pending"
-                                                    }
-                                                >
-                                                    Reject
-                                                </button>
+                                               <button 
+                                               onClick={() => onApprove(request.kycID)} 
+                                              className="approveButton"
+                                              disabled={request.verificationStatus !== 'pending'}
+                                            >
+                                              Approve
+                                            </button>
+                                            
+                                            <button 
+                                              onClick={() =>  {
+                                                console.log("Button is pressend")
+                                                console.log("Id is " ,  request.kycID);
+                                                openRejectModal(request.kycID)
+                                              } }
+                                              className="rejectButton"
+                                              disabled={request.verificationStatus !== 'pending'}
+                                            >
+                                              Reject
+                                            </button>
                                             </td>
                                         </tr>
                                     );
