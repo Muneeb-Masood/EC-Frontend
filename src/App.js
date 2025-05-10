@@ -21,7 +21,7 @@ const App = () => {
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-  const [isKYCSubmitted, setIsKYCSubmitted] = useState(true);
+  const [isKYCSubmitted, setIsKYCSubmitted] = useState(false);
   const [user, setUser] = useState(null);
   const [kycRequests, setKycRequests] = useState([]);
   const [kycStatus, setKycStatus] = useState("Pending");
