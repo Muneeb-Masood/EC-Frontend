@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import '../../../styles.css'; 
 import Notification from '../../../components/Notification/Notification';
@@ -7,6 +7,7 @@ import Notification from '../../../components/Notification/Notification';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 const SignupPage = ({ onSignup }) => {
+    const navigate = useNavigate()
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [phone, setPhone] = useState("");
@@ -59,7 +60,8 @@ const SignupPage = ({ onSignup }) => {
         setTimeout(() => {
           onSignup({ email, password, phone });
           resetForm();
-        }, 2000);
+          navigate("/login");
+        }, 10000);
       } catch (error) {
         handleApiError(error, "Signup failed. Please try again.");
       } finally {

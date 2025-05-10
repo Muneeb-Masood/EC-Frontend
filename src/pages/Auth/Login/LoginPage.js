@@ -157,7 +157,7 @@ const LoginPage = ({ onLogin }) => {
           });
         },
         () => {
-          setGeoLocation({ latitude: "10", longitude: "20" }); // Default values
+          setGeoLocation({ latitude: null, longitude: null }); // Default values
         }
       );
     }

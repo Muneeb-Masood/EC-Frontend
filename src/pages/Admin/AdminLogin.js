@@ -1,25 +1,44 @@
 import React, { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import "../../styles.css";
+import axios from 'axios';
 import '../../components/Notification/Notification';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 const AdminLogin = ({ onAdminLogin }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
   
-    const handleLogin = () => {
+    const handleApiError = (error, defaultMessage) => {
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          defaultMessage;
+      setError(errorMessage);
+      
+      if (process.env.REACT_APP_DEBUG === 'true') {
+        console.error('API Error:', error);
+      }
+    };
+
+    const handleLogin = async () => {
       if (!username || !password) {
         setError("Please fill in all fields.");
         return;
       }
-      if (username === "admin" && password === "admin123") {
-        onAdminLogin();
-        // Clear fields after successful login
-        setUsername("");
-        setPassword("");
-      } else {
-        setError("Invalid credentials.");
+      try {
+        console.log('h')
+        const response = await axios.post(`${API_BASE_URL}/api/login/adminLogin`, {
+          username,
+          password,
+        });
+        console.log(response.data.token)
+        localStorage.setItem('AdminLoginToken', response.data.token);
+          onAdminLogin();
+         
+      } catch (error) {
+        handleApiError(error, "Login failed. Please try again.");
       }
     };
   

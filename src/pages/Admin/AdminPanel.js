@@ -4,6 +4,10 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import "../../styles.css";
 import Notification from '../../components/Notification/Notification';
+import axios from 'axios';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+
 
 // Fix for default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -15,90 +19,7 @@ L.Icon.Default.mergeOptions({
 
 const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
   const [activeTab, setActiveTab] = useState('kyc');
-  const [transactions, setTransactions] = useState([
-    { 
-      id: 1, 
-      type: 'Withdrawal', 
-      user: 'user1@example.com', 
-      amount: '0.5 ETH', 
-      status: 'Pending', 
-      date: '2023-05-15 14:30',
-      clusters_info: {
-        baseline_density: 3.23,
-        cluster1_info: {
-          density_per_km2: 1.35,
-          is_suspicious: false,
-          label: 0,
-          latitude_center: 12.320545,
-          longitude_center: 120.300182,
-          radius_km: 1.609,
-          suspicious_reason: "Normal",
-          transaction_count: 11
-        },
-        cluster2_info: {
-          density_per_km2: 3.08,
-          is_suspicious: false,
-          label: 1,
-          latitude_center: 12.3506,
-          longitude_center: 120.5013,
-          radius_km: 1.016,
-          suspicious_reason: "Normal",
-          transaction_count: 10
-        },
-        cluster3_info: {
-          density_per_km2: 3.38,
-          is_suspicious: false,
-          label: 2,
-          latitude_center: 12.5678,
-          longitude_center: 120.6788,
-          radius_km: 0.971,
-          suspicious_reason: "Normal",
-          transaction_count: 10
-        },
-        cluster4_info: {
-          density_per_km2: 2583.71,
-          is_suspicious: true,
-          label: 3,
-          latitude_center: 12.40014,
-          longitude_center: 120.40014,
-          radius_km: 0.025,
-          suspicious_reason: "Absolute threshold exceeded (100.0)",
-          transaction_count: 5
-        },
-        cluster5_info: {
-          density_per_km2: 22.87,
-          is_suspicious: true,
-          label: 4,
-          latitude_center: 12.1997,
-          longitude_center: 120.1997,
-          radius_km: 0.264,
-          suspicious_reason: "Relative threshold (5.0x baseline)",
-          transaction_count: 5
-        },
-        clusters_identified: 5,
-        distance_from_cluster_center_km: 0.063,
-        this_transaction_is_in_cluster: true,
-        transaction_cluster_density: 1.35,
-        transaction_cluster_number: "cluster1"
-      }
-    },
-    { 
-      id: 2, 
-      type: 'Deposit', 
-      user: 'user2@example.com', 
-      amount: '1000 USD', 
-      status: 'Pending', 
-      date: '2023-05-15 15:45' 
-    },
-    { 
-      id: 3, 
-      type: 'Transfer', 
-      user: 'user3@example.com', 
-      amount: '1.2 ETH', 
-      status: 'Pending', 
-      date: '2023-05-16 09:15' 
-    },
-  ]);
+  const [transactions, setTransactions] = useState([]);
   
   const [deposits, setDeposits] = useState([
     { id: 1, user: 'user4@example.com', amount: '500 USD', bankAccount: '****1234', status: 'Pending', date: '2023-05-14 11:20' },
@@ -185,24 +106,44 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     ) <= (radius / 1000); 
   });
 
-  const handleApproveTransaction = (id) => {
+  const handleRejectTransaction = (id) => {
     setTransactions(transactions.map(tx => 
       tx.id === id ? { ...tx, status: 'Approved' } : tx
     ));
     setNotification({ type: 'success', message: 'Transaction approved successfully!' });
   };
 
-  const handleRejectTransaction = (id) => {
-    setTransactions(transactions.map(tx => 
-      tx.id === id ? { ...tx, status: 'Rejected' } : tx
-    ));
-    setNotification({ type: 'error', message: 'Transaction rejected.' });
+  const handleApproveTransaction = async (transactionID, senderID, destinationWalletAddress, amount) => {
+    // setTransactions(transactions.map(tx => 
+    //   tx.id === id ? { ...tx, status: 'Rejected' } : tx
+    // ));
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/approveTransaction`, {
+        transactionID: transactionID,
+        senderID: senderID,
+        recieverWalletAddress: destinationWalletAddress,
+        amountInETH: amount
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('AdminLoginToken')}`,
+        }
+      });
+
+          if (response.data) {
+            setNotification({ type: 'success', message: 'Transaction approved successfully!' });
+          } 
+      } catch (error) {
+        handleApiError(error, "Cannot fetch transaction data");
+      } 
+
   };
 
-  const handleApproveDeposit = (id) => {
+  const handleApproveDeposit = async (id) => {
     setDeposits(deposits.map(deposit => 
       deposit.id === id ? { ...deposit, status: 'Approved' } : deposit
     ));
+
     setNotification({ type: 'success', message: 'Deposit approved successfully!' });
   };
 
@@ -241,6 +182,34 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
   const viewKYCDocuments = (request) => {
     setSelectedKYCRequest(request);
   };
+
+  const handleApiError = (error, defaultMessage) => {
+    const errorMessage = error.response?.data?.message || 
+                        error.message || 
+                        defaultMessage;
+    // setError(errorMessage);
+    
+    if (process.env.REACT_APP_DEBUG === 'true') {
+      console.error('API Error:', error);
+    }
+  };
+
+  const retrievePendingTransactionData = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/blockedTransactions`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('AdminLoginToken')}`,
+          }
+        });
+        
+      
+            if (response.data) {
+              setTransactions(response.data)
+            } 
+        } catch (error) {
+          handleApiError(error, "Cannot fetch transaction data");
+        } 
+  }
 
   const renderClusterInfo = (clusterInfo) => {
     if (!clusterInfo) return null;
@@ -310,10 +279,13 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
           KYC Requests
         </button>
         <button
-          className={`adminTab ${activeTab === 'transactions' ? 'activeAdminTab' : ''}`}
-          onClick={() => setActiveTab('transactions')}
-        >
-          Transaction Approvals
+            className={`adminTab ${activeTab === 'transactions' ? 'activeAdminTab' : ''}`}
+            onClick={() => {
+              setActiveTab('transactions');
+              retrievePendingTransactionData();
+            }}
+          >
+            Transaction Approvals
         </button>
         <button
           className={`adminTab ${activeTab === 'deposits' ? 'activeAdminTab' : ''}`}
@@ -402,7 +374,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
       {activeTab === 'transactions' && (
         <div className="adminTabContent">
           <h3>Pending Transactions</h3>
-          {transactions.filter(tx => tx.status === 'Pending').length === 0 ? (
+          {transactions.length === 0 ? (
             <p>No pending transactions.</p>
           ) : (
             <table className="adminTable">
@@ -410,33 +382,31 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                 <tr>
                   <th>ID</th>
                   <th>Type</th>
-                  <th>User</th>
                   <th>Amount</th>
-                  <th>Date</th>
+                  <th>Initiation Time</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {transactions.filter(tx => tx.status === 'Pending').map(tx => (
-                  <tr key={tx.id}>
-                    <td>{tx.id}</td>
+                {transactions.map(tx => (
+                  <tr key={tx.transactionID}>
+                    <td>{tx.transactionID}</td>
                     <td>{tx.type}</td>
-                    <td>{tx.user}</td>
                     <td>{tx.amount}</td>
-                    <td>{tx.date}</td>
+                    <td>{new Date(tx.initiationTimestamp * 1000).toLocaleString()}</td>
                     <td className="actionButtons">
                       <button 
-                        onClick={() => handleApproveTransaction(tx.id)} 
+                        onClick={() => handleApproveTransaction(tx.transactionID, tx.senderID, tx.destinationWalletAddress, tx.amount)} 
                         className="approveButton"
                       >
                         Approve
                       </button>
-                      <button 
+                      {/* <button 
                         onClick={() => handleRejectTransaction(tx.id)} 
                         className="rejectButton"
                       >
                         Reject
-                      </button>
+                      </button> */}
                     </td>
                   </tr>
                 ))}
@@ -445,7 +415,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
           )}
           
           <h3>Transaction History</h3>
-          {transactions.filter(tx => tx.status !== 'Pending').length === 0 ? (
+          {/* {transactions.filter(tx => tx.status !== 'Pending').length === 0 ? (
             <p>No transaction history.</p>
           ) : (
             <table className="adminTable">
@@ -474,7 +444,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                 ))}
               </tbody>
             </table>
-          )}
+          )} */}
         </div>
       )}
       
@@ -562,30 +532,8 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
           <h3>Transaction Clusters</h3>
           
           <div className="mapSection">
-            <h4>Transaction Clusters within {radius/1000}km Radius</h4>
-            <div className="mapControls">
-              <label>
-                Radius: 
-                <input
-                  type="range"
-                  min="500"
-                  max="5000"
-                  step="100"
-                  value={radius}
-                  onChange={(e) => setRadius(Number(e.target.value))}
-                />
-                {radius/1000} km
-              </label>
-              {userLocation && (
-                <button 
-                  onClick={() => setMapCenter(userLocation)}
-                  className="locationButton"
-                >
-                  Reset to My Location
-                </button>
-              )}
-            </div>
-            
+            <h4>Transaction Clusters</h4>
+
             <div className="mapContainer">
               <MapContainer 
                 key={mapKey}

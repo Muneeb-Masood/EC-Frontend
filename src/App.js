@@ -1,6 +1,6 @@
 // src/App.js
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import "./styles.css";
 import HomePage from "./pages/Home/HomePage";
 import LoginPage from "./pages/Auth/Login/LoginPage";
@@ -11,9 +11,11 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import SupportPage from "./pages/Support/SupportPage";
 import KYCForm from "./pages/KYC/KYCForm";
+// import VerifyEmailPage from "./pages/Auth/VerifyEmailPage/VerifyEmailPage";
 
 
 const App = () => {
+  // const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [isKYCSubmitted, setIsKYCSubmitted] = useState(false);
@@ -34,8 +36,9 @@ const App = () => {
   };
 
   const handleSignup = (userData) => {
-    setUser(userData);
-    setIsLoggedIn(true);
+      // setUser(userData);
+      // setIsLoggedIn(true);
+
   };
 
   const handleKYCSubmit = (kycData) => {
@@ -66,6 +69,7 @@ const App = () => {
           <Route path="/admin-login" element={isAdminLoggedIn ? <Navigate to="/admin" /> : <AdminLogin onAdminLogin={handleAdminLogin} />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/signup" element={isLoggedIn ? <Navigate to="/kyc" /> : <SignupPage onSignup={handleSignup} />} />
+          {/* <Route path="/verify-email" element={<VerifyEmailPage />} /> */}
           <Route path="/kyc" element={kycVerificaionStatus === 'verified' ? <Navigate to="/dashboard" /> : isLoggedIn ? <KYCForm onKYCSubmit={handleKYCSubmit} kycVerificaionStatus={kycVerificaionStatus}/> : <Navigate to="/login" />} />
           <Route path="/dashboard" element={kycVerificaionStatus === 'verified' ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} /> : <Navigate to="/login" />} />
           <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApprove} onReject={handleReject} /> : <Navigate to="/admin-login" />} />
