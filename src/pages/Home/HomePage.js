@@ -99,7 +99,7 @@ const HomePage = () => {
       {/* Header */}
       <Header />
 
-      <h3 className="heading">The Future of Trading Starts Here!</h3>
+      <h3 className="heading">Where Ideas Meet the Chain!</h3>
 
     {/* Getting Started Steps Section */}
     <div className="stepsContainer">

@@ -5,6 +5,7 @@ import axios from 'axios';
 import OtpInput from '../../../components/OTPInput/OtpInput';
 import Notification from '../../../components/Notification/Notification';
 import './LoginPage.css';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
@@ -36,11 +37,20 @@ const LoginPage = ({ onLogin }) => {
       }
     }, []);
   
-    const generateFingerprint = () => {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-      });
+    // const generateFingerprint = () => {
+    //   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    //     const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    //     return v.toString(16);
+    //   });
+    // };
+
+    const [fingerprint, setFingerprint] = useState('')
+    const generateFingerprint = async () => {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+
+      setFingerprint(result.visitorId)
+      // setFingerprint('123456789abcdefg')
     };
   
     const validateEmail = (email) => {
@@ -63,7 +73,8 @@ const LoginPage = ({ onLogin }) => {
       setError("");
       
       try {
-        const fingerprint = generateFingerprint();
+        await generateFingerprint();
+        console.log(fingerprint)
         const response = await axios.post(`${API_BASE_URL}/api/login/login`, {
           email,
           password,

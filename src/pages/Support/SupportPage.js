@@ -78,7 +78,7 @@ const SupportPage = () => {
         
         {/* Contact Info - No container div */}
         <h3 className="contactHeading">Contact Us</h3>
-        <p className="contactInfo">Email: support@Zentron.com</p>
+        <p className="contactInfo">Email: zentron.app@gmail.com</p>
         <p className="contactInfo">Phone: +92 79074707</p>
         <p className="contactInfo">Live Chat: Available 24/7</p>
         
