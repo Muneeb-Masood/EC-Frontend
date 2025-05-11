@@ -593,76 +593,83 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                         <p>No pending KYC requests.</p>
                     ) : (
                         <table className="adminTable">
-                            <thead>
+                           <thead>
                                 <tr>
-                                   <th>Name</th>
-                                  <th>Phone Number</th>
-                                  <th>Document Type</th>
-                                  <th>Document Link</th>
-                                   <th>Location</th>
+                                    <th>Name</th>
+                                    <th>Phone Number</th>
+                                    <th>CNIC Front</th>
+                                    <th>CNIC Back</th>
+                                    <th>Selfie</th>
+                                    <th>Utility Bill</th>
+                                    <th>Location</th>
                                     <th>Status</th>
-                                  <th>Actions</th>
+                                    <th>Actions</th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {kycRequests.map((request, index) => {
-                                    const distance = request.location
-                                        ? calculateDistance(
-                                              mapCenter.lat,
-                                              mapCenter.lng,
-                                              request.location.lat,
-                                              request.location.lng
-                                          )
-                                        : null;
+                                </thead>
+                           <tbody>
+    {kycRequests.map((request, index) => {
+        const distance = request.location
+            ? calculateDistance(
+                  mapCenter.lat,
+                  mapCenter.lng,
+                  request.location.latitude,
+                  request.location.longitude
+              )
+            : null;
 
-                                    const isWithinRadius =
-                                        distance !== null &&
-                                        distance <= radius / 1000;
+        const isWithinRadius =
+            distance !== null && distance <= radius / 1000;
 
-                                    return (
-                                        <tr key={index}>
-                                            <td>{request.name}</td>
-                                            <td>{request.phoneNumber}</td>
-                                            <td>{request.documentType}</td>
-                                            <td className="viewDocument">
-                                                <a
-                                                href={request.documentReference}
-                                                target="_blank"
-                                                >
-                                                View Document
-                                                </a>
-                                            </td>     
-                                            <td>
-                                                {request.location ? (
-                                                    <span
-                                                        className={
-                                                            isWithinRadius
-                                                                ? "inRadius"
-                                                                : "outOfRadius"
-                                                        }
-                                                    >
-                                                        {distance
-                                                            ? `${distance.toFixed(
-                                                                  1
-                                                              )}km`
-                                                            : "Unknown"}
-                                                    </span>
-                                                ) : (
-                                                    "No location"
-                                                )}
-                                            </td>
-                                            <td>{request.status}</td>
+        return (
+            <tr key={index}>
+                <td>{request.name}</td>
+                <td>{request.phoneNumber}</td>
+
+                {/* CNIC Front */}
+                <td className="viewDocument">
+                    <a href={request.cnicFrontReference} target="_blank" rel="noopener noreferrer" style={{ color: 'lightblue' }}>
+                        View CNIC Front
+                    </a>
+                </td>
+
+                {/* CNIC Back */}
+                <td className="viewDocument">
+                    <a href={request.cnicBackReference} target="_blank" rel="noopener noreferrer" style={{ color: 'lightblue' }}>
+                        View CNIC Back
+                    </a>
+                </td>
+
+                {/* Selfie */}
+                <td className="viewDocument">
+                    <a href={request.selfieReference} target="_blank" rel="noopener noreferrer" style={{ color: 'lightblue' }}>
+                        View Selfie
+                    </a>
+                </td>
+
+                {/* Utility Bill */}
+                <td className="viewDocument">
+                    <a href={request.utilityBillReference} target="_blank" rel="noopener noreferrer" style={{ color: 'lightblue' }}>
+                        View Utility Bill
+                    </a>
+                </td>
+
+                {/* Location */}
+                <td>
+                    {request.location ? (
+                        <span
+                            className={isWithinRadius ? "inRadius" : "outOfRadius"}
+                        >
+                            {distance ? `${distance.toFixed(1)} km` : "Unknown"}
+                        </span>
+                    ) : (
+                        "No location"
+                    )}
+                </td>
+
+                {/* Status */}
+                <td>{request.verificationStatus}</td>
                                             <td className="actionButtons">
-                                                <button
-                                                    onClick={() =>
-                                                        viewKYCDocuments(
-                                                            request
-                                                        )
-                                                    }
-                                                    className="infoButton"
-                                                >
-                                                    View Documents
-                                                </button>
+                                               
                                                <button 
                                                onClick={() => onApprove(request.kycID)} 
                                               className="approveButton"
@@ -675,7 +682,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                                               onClick={() =>  {
                                                 console.log("Button is pressend")
                                                 console.log("Id is " ,  request.kycID);
-                                                openRejectModal(request.kycID)
+                                                onReject(request.kycID)
                                               } }
                                               className="rejectButton"
                                               disabled={request.verificationStatus !== 'pending'}
@@ -705,7 +712,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                                     <th>Type</th>
                                     <th>Amount</th>
                                     <th>Initiation Time</th>
-                                    <th>Actions</th>
+                                    <th style={{ width: "100%" }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
