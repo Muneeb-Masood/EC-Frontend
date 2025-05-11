@@ -28,7 +28,6 @@ const AdminLogin = ({ onAdminLogin }) => {
         return;
       }
       try {
-        console.log('h')
         const response = await axios.post(`${API_BASE_URL}/api/login/adminLogin`, {
           username,
           password,

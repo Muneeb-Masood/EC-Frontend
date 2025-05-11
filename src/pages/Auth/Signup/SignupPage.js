@@ -65,27 +65,27 @@ const SignupPage = ({ onSignup }) => {
       }
     };
   
-    const handleOtpVerification = async () => {
-      if (otp.length !== 4 || isNaN(otp)) {
-        setError("OTP must be a 4-digit number.");
-        return;
-      }
+    // const handleOtpVerification = async () => {
+    //   if (otp.length !== 4 || isNaN(otp)) {
+    //     setError("OTP must be a 4-digit number.");
+    //     return;
+    //   }
   
-      setIsLoading(true);
+    //   setIsLoading(true);
       
-      try {
-        setSuccessMessage("OTP Verified! Account created successfully.");
-        setTimeout(() => {
-          onSignup({ email, password, phone });
-          resetForm();
-          navigate("/login");
-        }, 10000);
-      } catch (error) {
-        handleApiError(error, "Signup failed. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    //   try {
+    //     setSuccessMessage("OTP Verified! Account created successfully.");
+    //     setTimeout(() => {
+    //       onSignup({ email, password, phone });
+    //       resetForm();
+    //       navigate("/login");
+    //     }, 10000);
+    //   } catch (error) {
+    //     handleApiError(error, "Signup failed. Please try again.");
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
   
     const resetForm = () => {
       setEmail("");
