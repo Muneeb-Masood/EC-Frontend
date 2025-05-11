@@ -321,6 +321,34 @@ const Dashboard = ({onLogout}) => {
             setNotification("Invalid deposit amount.");
             return;
         }
+        const form = document.createElement("form");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", "https://sandbox.payfast.co.za/eng/process");
+        form.setAttribute("target", "_blank");
+
+        const payfastFields = {
+        merchant_id: "10038860",
+        merchant_key: "2653kli77abkv",
+        return_url: "https://yourdomain.com/return",
+        cancel_url: "https://yourdomain.com/cancel",
+        notify_url: "https://yourdomain.com/notify",
+        amount: usdAmount.toFixed(2),
+        item_name: "ETH Wallet Deposit",
+        m_payment_id: `DEP_${Date.now()}`,
+        email_address: "customer@example.com", // You can set this dynamically
+        };
+
+        for (const key in payfastFields) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = payfastFields[key];
+        form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
 
         try {
             const token = localStorage.getItem('token');

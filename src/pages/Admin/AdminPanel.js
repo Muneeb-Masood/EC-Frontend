@@ -675,7 +675,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                                               onClick={() =>  {
                                                 console.log("Button is pressend")
                                                 console.log("Id is " ,  request.kycID);
-                                                openRejectModal(request.kycID)
+                                                onReject(request.kycID)
                                               } }
                                               className="rejectButton"
                                               disabled={request.verificationStatus !== 'pending'}

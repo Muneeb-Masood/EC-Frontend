@@ -178,7 +178,7 @@ const handleReject = async (kycID) => {
           {/* <Route path="/verify-email" element={<VerifyEmailPage />} /> */}
           <Route path="/kyc" element={kycVerificaionStatus === 'verified' ? <Navigate to="/dashboard" /> : isLoggedIn ? <KYCForm onKYCSubmit={handleKYCSubmit} kycVerificaionStatus={kycVerificaionStatus}/> : <Navigate to="/login" />} />
           <Route path="/dashboard" element={kycVerificaionStatus === 'verified' ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} onLogout={handleLogout}/> : <Navigate to="/login" />} />
-          <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApprove} onReject={handleReject} /> : <Navigate to="/admin-login" />} />
+          <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApproveKYC} onReject={openRejectModal} /> : <Navigate to="/admin-login" />} />
           <Route path="/support" element={<SupportPage />} />
         </Routes>
         {showRejectModal && (
