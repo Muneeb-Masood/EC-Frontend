@@ -332,7 +332,7 @@ const Dashboard = ({onLogout}) => {
         return_url: "https://yourdomain.com/return",
         cancel_url: "https://yourdomain.com/cancel",
         notify_url: "https://yourdomain.com/notify",
-        amount: usdAmount.toFixed(2),
+        amount: usdAmount.toFixed(2) * 280,
         item_name: "ETH Wallet Deposit",
         m_payment_id: `DEP_${Date.now()}`,
         email_address: "customer@example.com", // You can set this dynamically
@@ -365,10 +365,18 @@ const Dashboard = ({onLogout}) => {
                 }
             );
 
-            if (response) {
-                console.log(response)
-                setNotification(`${response.data.message}. The transaction ID is ${response.data.TxHash}`);
-            } 
+                        if (true) {
+                setNotification(`${response.data.message}. Transaction ID: ${response.data.TxHash}`);
+
+                await axios.post('http://localhost:5000/api/transferConfirmation/sendConfirmation', {
+                    amount: usdAmount,
+                    walletAddress: response.data.walletAddress,  
+                    toEmail: response.data.email             
+                });
+
+                console.log("Confirmation email sent.");
+            }
+
         } catch (error) {
             handleApiError(error, "Transaction cannot be done");
         }
