@@ -100,51 +100,43 @@ const KYCForm = ({ onKYCSubmit }) => {
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) throw new Error('No authentication token found');
-            
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('phoneNumber', phoneNumber);
-            formData.append('documentType', documentType);
-            formData.append('selfie', selfie);
-            formData.append('idFront', idFront);
-            formData.append('idBack', idBack);
-            formData.append('utilityBill', utilityBill);
-            formData.append('currentAddress', currentAddress);
-            formData.append('city', city);
-            formData.append('location', JSON.stringify(location));
-            
-            const response = await axios.post(`${API_BASE_URL}/api/kyc/submit`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            
-            if (onKYCSubmit) {
-                onKYCSubmit(response.data);
-            }
-            navigate('/dashboard');
-        } catch (error) {
-            setError(error.response?.data?.message || "Failed to submit KYC form. Please try again.");
-        }
-    };
 
-    const handleFileChange = (setter) => (e) => {
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+        const kycData = {
+            name,
+            phoneNumber,
+            documentType,
+            selfie,
+            cnicFront: idFront,
+            cnicBack: idBack,
+            utilityBill,
+            currentAddress,
+            city,
+            longitude: location?.longitude,
+            latitude: location?.latitude
+        };
+
+        if (onKYCSubmit) {
+            await onKYCSubmit(kycData);
+        }
+
+        navigate('/dashboard');
+    } catch (error) {
+        console.log(error);
+        setError("Failed to submit KYC form. Please try again.");
+    }
+};
+
+  const handleFileChange = (setter) => (e) => {
         if (e.target.files && e.target.files[0]) {
             setter(e.target.files[0]);
         }
     };
-
-    // if (authState.isLoading) {
-    //     return <div className="loading-spinner">Loading...</div>;
-    // }
 
     return (
         <div className="kycPage">
@@ -253,6 +245,7 @@ const KYCForm = ({ onKYCSubmit }) => {
                 </div>
                 
                 <button
+                    
                     type="submit"
                     className="button"
                     disabled={!name || !phoneNumber || !documentType || !selfie || !idFront || 
@@ -275,3 +268,48 @@ const KYCForm = ({ onKYCSubmit }) => {
 };
 
 export default KYCForm;
+
+
+//     const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setError("");
+        
+    //     try {
+    //         // const token = localStorage.getItem('token');
+    //         // if (!token) throw new Error('No authentication token found');
+            
+    //         // const formData = new FormData();
+    //         // formData.append('name', name);
+    //         // formData.append('phoneNumber', phoneNumber);
+    //         // formData.append('documentType', documentType);
+    //         // formData.append('selfie', selfie);
+    //         // formData.append('idFront', idFront);
+    //         // formData.append('idBack', idBack);
+    //         // formData.append('utilityBill', utilityBill);
+    //         // formData.append('currentAddress', currentAddress);
+    //         // formData.append('city', city);
+    //         // formData.append('location', JSON.stringify(location));
+            
+    //         // const response = await axios.post(`${API_BASE_URL}/api/kyc/submit`, formData, {
+    //         //     headers: {
+    //         //         'Content-Type': 'multipart/form-data',
+    //         //         Authorization: `Bearer ${token}`
+    //         //     }
+            
+            
+    //         if (onKYCSubmit) {
+    //             onKYCSubmit(response.data);
+    //         }
+    //         navigate('/dashboard');
+    //     }
+    //      catch (error) {
+    //         console.log(error);
+    //         setError(error.response?.data?.message || "Failed to submit KYC form. Please try again.");
+    //     }
+
+
+  
+
+    // if (authState.isLoading) {
+    //     return <div className="loading-spinner">Loading...</div>;
+    // }}

@@ -79,20 +79,32 @@ const App = () => {
   };
 
   const handleKYCSubmit = async (kycData) => {
+    console.log("From 121");
     setDisplayMessage("Dummy Message");
+    // print(kycData);
 
     const formData = new FormData();
     formData.append("name", kycData.name);
     formData.append("phoneNumber", kycData.phoneNumber);
     formData.append("documentType", kycData.documentType);
-    formData.append("document", kycData.document);
+    formData.append("currentAddress", kycData.currentAddress);
+    formData.append("city", kycData.city);
 
-    // console.log("From line 50");
-    // console.log(kycData.picture);
-    console.log(kycData.document);
+    formData.append("cnicFront", kycData.cnicFront);
+    formData.append("cnicBack", kycData.cnicBack);
+    formData.append("selfie", kycData.selfie);
+    formData.append("utilityBill", kycData.utilityBill);
+    formData.append("longitude", kycData.longitude);
+    formData.append("latitude", kycData.latitude);
+
+    console.log("Form data to be submitted:");
+    console.log(kycData);
+
     setKycRequests(kycData);
+
     const result = await apiRequest('POST', 'http://localhost:5000/api/kyc/uploadDocs', formData);
-    if(result.success){
+
+    if(result.success) {
       setTimeout(() => {
         setIsKYCSubmitted(true);
       }, 2000);
@@ -101,9 +113,8 @@ const App = () => {
 
     setDisplayMessage(genericErrorMessage);
     setIsKYCSubmitted(true);
+};
 
-    
-  };
 
   const handleApproveKYC = async (kycID) => {
     console.log(kycID);
@@ -130,7 +141,7 @@ const submitRejection = async () => {
   console.log("From 121");
   console.log(response);
   if (response.success) {
-    const updatedRequests = kycRequests.filter(req => req._id !== selectedKycID);
+    const updatedRequests = kycRequests.filter(request => request.kycID !== selectedKycID);
     setKycRequests(updatedRequests);
     setKycStatus("Rejected");
     setShowRejectModal(false);
