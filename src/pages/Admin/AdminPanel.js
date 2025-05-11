@@ -593,17 +593,19 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                         <p>No pending KYC requests.</p>
                     ) : (
                         <table className="adminTable">
-                            <thead>
+                           <thead>
                                 <tr>
-                                   <th>Name</th>
-                                  <th>Phone Number</th>
-                                  <th>Document Type</th>
-                                  <th>Document Link</th>
-                                   <th>Location</th>
+                                    <th>Name</th>
+                                    <th>Phone Number</th>
+                                    <th>CNIC Front</th>
+                                    <th>CNIC Back</th>
+                                    <th>Selfie</th>
+                                    <th>Utility Bill</th>
+                                    <th>Location</th>
                                     <th>Status</th>
-                                  <th>Actions</th>
+                                    <th>Actions</th>
                                 </tr>
-                            </thead>
+                                </thead>
                             <tbody>
                                 {kycRequests.map((request, index) => {
                                     const distance = request.location
@@ -675,7 +677,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                                               onClick={() =>  {
                                                 console.log("Button is pressend")
                                                 console.log("Id is " ,  request.kycID);
-                                                openRejectModal(request.kycID)
+                                                onReject(request.kycID)
                                               } }
                                               className="rejectButton"
                                               disabled={request.verificationStatus !== 'pending'}

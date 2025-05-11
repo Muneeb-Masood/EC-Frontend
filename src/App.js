@@ -79,20 +79,32 @@ const App = () => {
   };
 
   const handleKYCSubmit = async (kycData) => {
+    console.log("From 121");
     setDisplayMessage("Dummy Message");
+    // print(kycData);
 
     const formData = new FormData();
     formData.append("name", kycData.name);
     formData.append("phoneNumber", kycData.phoneNumber);
     formData.append("documentType", kycData.documentType);
-    formData.append("document", kycData.document);
+    formData.append("currentAddress", kycData.currentAddress);
+    formData.append("city", kycData.city);
 
-    // console.log("From line 50");
-    // console.log(kycData.picture);
-    console.log(kycData.document);
+    formData.append("cnicFront", kycData.cnicFront);
+    formData.append("cnicBack", kycData.cnicBack);
+    formData.append("selfie", kycData.selfie);
+    formData.append("utilityBill", kycData.utilityBill);
+    formData.append("longitude", kycData.longitude);
+    formData.append("latitude", kycData.latitude);
+
+    console.log("Form data to be submitted:");
+    console.log(kycData);
+
     setKycRequests(kycData);
+
     const result = await apiRequest('POST', 'http://localhost:5000/api/kyc/uploadDocs', formData);
-    if(result.success){
+
+    if(result.success) {
       setTimeout(() => {
         setIsKYCSubmitted(true);
       }, 2000);
@@ -101,9 +113,8 @@ const App = () => {
 
     setDisplayMessage(genericErrorMessage);
     setIsKYCSubmitted(true);
+};
 
-    
-  };
 
   const handleApproveKYC = async (kycID) => {
     console.log(kycID);
@@ -177,8 +188,8 @@ const handleReject = async (kycID) => {
           <Route path="/signup" element={isLoggedIn ? <Navigate to="/kyc" /> : <SignupPage onSignup={handleSignup} />} />
           {/* <Route path="/verify-email" element={<VerifyEmailPage />} /> */}
           <Route path="/kyc" element={kycVerificaionStatus === 'verified' ? <Navigate to="/dashboard" /> : isLoggedIn ? <KYCForm onKYCSubmit={handleKYCSubmit} kycVerificaionStatus={kycVerificaionStatus}/> : <Navigate to="/login" />} />
-          <Route path="/dashboard" element={kycVerificaionStatus === 'verified' ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} onLogout={handleLogout}/> : <Navigate to="/login" />} />
-          <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApprove} onReject={handleReject} /> : <Navigate to="/admin-login" />} />
+          <Route path="/dashboard" element={true ? <Dashboard user={user} kycStatus={kycStatus} accountStatus={accountStatus} onLogout={handleLogout}/> : <Navigate to="/login" />} />
+          <Route path="/admin" element={isAdminLoggedIn ? <AdminPanel kycRequests={kycRequests} onApprove={handleApproveKYC} onReject={openRejectModal} /> : <Navigate to="/admin-login" />} />
           <Route path="/support" element={<SupportPage />} />
         </Routes>
         {showRejectModal && (
