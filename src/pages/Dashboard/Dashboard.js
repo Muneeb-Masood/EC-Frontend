@@ -365,7 +365,7 @@ const Dashboard = ({onLogout}) => {
                 }
             );
 
-                        if (true) {
+                        if (response) {
                 setNotification(`${response.data.message}. Transaction ID: ${response.data.TxHash}`);
 
                 await axios.post('http://localhost:5000/api/transferConfirmation/sendConfirmation', {
