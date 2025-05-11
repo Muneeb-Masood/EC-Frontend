@@ -624,7 +624,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
             <tr key={index}>
                 <td>{request.name}</td>
                 <td>{request.phoneNumber}</td>
-                <td>{request.documentType}</td>
 
                 {/* CNIC Front */}
                 <td className="viewDocument">
@@ -668,7 +667,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                 </td>
 
                 {/* Status */}
-                <td>{request.status}</td>
+                <td>{request.verificationStatus}</td>
                                             <td className="actionButtons">
                                                
                                                <button 
