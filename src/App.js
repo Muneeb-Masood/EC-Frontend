@@ -141,7 +141,7 @@ const submitRejection = async () => {
   console.log("From 121");
   console.log(response);
   if (response.success) {
-    const updatedRequests = kycRequests.filter(req => req._id !== selectedKycID);
+    const updatedRequests = kycRequests.filter(request => request.kycID !== selectedKycID);
     setKycRequests(updatedRequests);
     setKycStatus("Rejected");
     setShowRejectModal(false);
