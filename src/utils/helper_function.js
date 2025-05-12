@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const apiRequest = async (method, url, body = {}, headers = {}) => {
+  console.log(headers)
   try {
     const response = await axios({
       method: method,       

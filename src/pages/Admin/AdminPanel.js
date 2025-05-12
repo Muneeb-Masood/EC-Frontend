@@ -51,44 +51,45 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     // Extract all clusters from transactions
 
     useEffect(() => {
-      const fetchClusterData = async () => {
-          try {
-              const response = await axios.get(
-                  `${API_BASE_URL}/api/admin/clusterInfo`,
-                  {
-                      headers: {
-                          Authorization: `Bearer ${localStorage.getItem(
-                              "AdminLoginToken"
-                          )}`,
-                      },
-                  }
-              );
-              console.log(response);
-  
-              if (response.data.data) {
-                  const clusters = Object.entries(response.data.data.clusters_info)
-                      .filter(
-                          ([key, value]) =>
-                              key.startsWith("cluster") && key.endsWith("_info")
-                      )
-                      .map(([key, value]) => ({
-                          cluster_id: key,
-                          ...value,
-                      }));
-                  setAllClusters(clusters);
-                  console.log(clusters);
-              }
-          } catch (error) {
-              handleApiError(error, "Cannot fetch transaction data");
-          }
-      };
-  
+        const fetchClusterData = async () => {
+            try {
+                const response = await axios.get(
+                    `${API_BASE_URL}/api/admin/clusterInfo`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem(
+                                "AdminLoginToken"
+                            )}`,
+                        },
+                    }
+                );
+                console.log(response);
 
-      fetchClusterData();
-      const intervalId = setInterval(fetchClusterData, 10000);
-      return () => clearInterval(intervalId);
-  }, []);
-  
+                if (response.data.data) {
+                    const clusters = Object.entries(
+                        response.data.data.clusters_info
+                    )
+                        .filter(
+                            ([key, value]) =>
+                                key.startsWith("cluster") &&
+                                key.endsWith("_info")
+                        )
+                        .map(([key, value]) => ({
+                            cluster_id: key,
+                            ...value,
+                        }));
+                    setAllClusters(clusters);
+                    console.log(clusters);
+                }
+            } catch (error) {
+                handleApiError(error, "Cannot fetch transaction data");
+            }
+        };
+
+        fetchClusterData();
+        const intervalId = setInterval(fetchClusterData, 10000);
+        return () => clearInterval(intervalId);
+    }, []);
 
     useEffect(() => {
         if (allClusters.length > 0 && mapRef.current) {
@@ -131,11 +132,11 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     };
-  
+
     // return (
     //   <div className="adminPanel">
     //     <h2 className="heading">Admin Dashboard</h2>
-        
+
     //     {notification && (
     //       <Notification
     //         message={notification.message}
@@ -143,7 +144,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     //         type={notification.type}
     //       />
     //     )}
-        
+
     //     <div className="adminTabs">
     //       <button
     //         className={`adminTab ${activeTab === 'kyc' ? 'activeAdminTab' : ''}`}
@@ -158,7 +159,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     //         Transaction Approvals
     //       </button>
     //     </div>
-        
+
     //     {activeTab === 'kyc' && (
     //       <div className="adminTabContent">
     //         <h3>KYC Verification Requests</h3>
@@ -189,17 +190,17 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     //                         >
     //                           View Document
     //                         </a>
-    //                       </td>     
+    //                       </td>
     //                     <td>{request.verificationStatus}</td>
     //                   <td className="actionButtons">
-    //                     <button 
-    //                       onClick={() => onApprove(request.kycID)} 
+    //                     <button
+    //                       onClick={() => onApprove(request.kycID)}
     //                       className="approveButton"
     //                       disabled={request.verificationStatus !== 'pending'}
     //                     >
     //                       Approve
     //                     </button>
-    //                     <button 
+    //                     <button
     //                       onClick={() =>  {
     //                         console.log("Button is pressend")
     //                         console.log("Id is " ,  request.kycID);
@@ -218,7 +219,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     //         )}
     //       </div>
     //     )}
-        
+
     //     {activeTab === 'transactions' && (
     //       <div className="adminTabContent">
     //         <h3>Pending Transactions</h3>
@@ -245,14 +246,14 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     //                   <td>{tx.amount}</td>
     //                   <td>{tx.date}</td>
     //                   <td className="actionButtons">
-    //                     <button 
-    //                       onClick={() => handleApproveTransaction(tx.id)} 
+    //                     <button
+    //                       onClick={() => handleApproveTransaction(tx.id)}
     //                       className="approveButton"
     //                     >
     //                       Approve
     //                     </button>
-    //                     <button 
-    //                       onClick={() => handleRejectTransaction(tx.id)} 
+    //                     <button
+    //                       onClick={() => handleRejectTransaction(tx.id)}
     //                       className="rejectButton"
     //                     >
     //                       Reject
@@ -263,7 +264,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
     //             </tbody>
     //           </table>
     //         )}
-            
+
     //         <h3>Transaction History</h3>
     //         {transactions.filter(tx => tx.status !== 'Pending').length === 0 ? (
     //           <p>No transaction history.</p>
@@ -428,11 +429,22 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
             );
 
             if (response.data) {
+                console.log(response.data);
                 setTransactions(response.data);
             }
         } catch (error) {
             handleApiError(error, "Cannot fetch transaction data");
         }
+    };
+
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
+
+    const showTransactionDetails = (tx) => {
+        setSelectedTransaction(tx);
+    };
+
+    const hideTransactionDetails = () => {
+        setSelectedTransaction(null);
     };
 
     const renderClusterInfo = (clusterInfo) => {
@@ -569,14 +581,6 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                 </button>
                 <button
                     className={`adminTab ${
-                        activeTab === "deposits" ? "activeAdminTab" : ""
-                    }`}
-                    onClick={() => setActiveTab("deposits")}
-                >
-                    Deposit Approvals
-                </button>
-                <button
-                    className={`adminTab ${
                         activeTab === "clusters" ? "activeAdminTab" : ""
                     }`}
                     onClick={() => setActiveTab("clusters")}
@@ -593,7 +597,7 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                         <p>No pending KYC requests.</p>
                     ) : (
                         <table className="adminTable">
-                           <thead>
+                            <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>Phone Number</th>
@@ -605,90 +609,149 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
-                                </thead>
-                           <tbody>
-    {kycRequests.map((request, index) => {
-        const distance = request.location
-            ? calculateDistance(
-                  mapCenter.lat,
-                  mapCenter.lng,
-                  request.location.latitude,
-                  request.location.longitude
-              )
-            : null;
+                            </thead>
+                            <tbody>
+                                {kycRequests.map((request, index) => {
+                                    const distance = request.location
+                                        ? calculateDistance(
+                                              mapCenter.lat,
+                                              mapCenter.lng,
+                                              request.location.latitude,
+                                              request.location.longitude
+                                          )
+                                        : null;
 
-        const isWithinRadius =
-            distance !== null && distance <= radius / 1000;
+                                    const isWithinRadius =
+                                        distance !== null &&
+                                        distance <= radius / 1000;
 
-        return (
-            <tr key={index}>
-                <td>{request.name}</td>
-                <td>{request.phoneNumber}</td>
+                                    return (
+                                        <tr key={index}>
+                                            <td>{request.name}</td>
+                                            <td>{request.phoneNumber}</td>
 
-                {/* CNIC Front */}
-                <td className="viewDocument">
-                    <a href={request.cnicFrontReference} target="_blank" rel="noopener noreferrer" style={{ color: 'lightblue' }}>
-                        View CNIC Front
-                    </a>
-                </td>
+                                            {/* CNIC Front */}
+                                            <td className="viewDocument">
+                                                <a
+                                                    href={
+                                                        request.cnicFrontReference
+                                                    }
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{
+                                                        color: "lightblue",
+                                                    }}
+                                                >
+                                                    View CNIC Front
+                                                </a>
+                                            </td>
 
-                {/* CNIC Back */}
-                <td className="viewDocument">
-                    <a href={request.cnicBackReference} target="_blank" rel="noopener noreferrer" style={{ color: 'lightblue' }}>
-                        View CNIC Back
-                    </a>
-                </td>
+                                            {/* CNIC Back */}
+                                            <td className="viewDocument">
+                                                <a
+                                                    href={
+                                                        request.cnicBackReference
+                                                    }
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{
+                                                        color: "lightblue",
+                                                    }}
+                                                >
+                                                    View CNIC Back
+                                                </a>
+                                            </td>
 
-                {/* Selfie */}
-                <td className="viewDocument">
-                    <a href={request.selfieReference} target="_blank" rel="noopener noreferrer" style={{ color: 'lightblue' }}>
-                        View Selfie
-                    </a>
-                </td>
+                                            {/* Selfie */}
+                                            <td className="viewDocument">
+                                                <a
+                                                    href={
+                                                        request.selfieReference
+                                                    }
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{
+                                                        color: "lightblue",
+                                                    }}
+                                                >
+                                                    View Selfie
+                                                </a>
+                                            </td>
 
-                {/* Utility Bill */}
-                <td className="viewDocument">
-                    <a href={request.utilityBillReference} target="_blank" rel="noopener noreferrer" style={{ color: 'lightblue' }}>
-                        View Utility Bill
-                    </a>
-                </td>
+                                            {/* Utility Bill */}
+                                            <td className="viewDocument">
+                                                <a
+                                                    href={
+                                                        request.utilityBillReference
+                                                    }
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{
+                                                        color: "lightblue",
+                                                    }}
+                                                >
+                                                    View Utility Bill
+                                                </a>
+                                            </td>
 
-                {/* Location */}
-                <td>
-                    {request.location ? (
-                        <span
-                            className={isWithinRadius ? "inRadius" : "outOfRadius"}
-                        >
-                            {distance ? `${distance.toFixed(1)} km` : "Unknown"}
-                        </span>
-                    ) : (
-                        "No location"
-                    )}
-                </td>
+                                            {/* Location */}
+                                            <td>
+                                                {request.location ? (
+                                                    <span
+                                                        className={
+                                                            isWithinRadius
+                                                                ? "inRadius"
+                                                                : "outOfRadius"
+                                                        }
+                                                    >
+                                                        {distance
+                                                            ? `${distance.toFixed(
+                                                                  1
+                                                              )} km`
+                                                            : "Unknown"}
+                                                    </span>
+                                                ) : (
+                                                    "No location"
+                                                )}
+                                            </td>
 
-                {/* Status */}
-                <td>{request.verificationStatus}</td>
+                                            {/* Status */}
+                                            <td>
+                                                {request.verificationStatus}
+                                            </td>
                                             <td className="actionButtons">
-                                               
-                                               <button 
-                                               onClick={() => onApprove(request.kycID)} 
-                                              className="approveButton"
-                                              disabled={request.verificationStatus !== 'pending'}
-                                            >
-                                              Approve
-                                            </button>
-                                            
-                                            <button 
-                                              onClick={() =>  {
-                                                console.log("Button is pressend")
-                                                console.log("Id is " ,  request.kycID);
-                                                onReject(request.kycID)
-                                              } }
-                                              className="rejectButton"
-                                              disabled={request.verificationStatus !== 'pending'}
-                                            >
-                                              Reject
-                                            </button>
+                                                <button
+                                                    onClick={() =>
+                                                        onApprove(request.kycID)
+                                                    }
+                                                    className="approveButton"
+                                                    disabled={
+                                                        request.verificationStatus !==
+                                                        "pending"
+                                                    }
+                                                >
+                                                    Approve
+                                                </button>
+
+                                                <button
+                                                    onClick={() => {
+                                                        console.log(
+                                                            "Button is pressend"
+                                                        );
+                                                        console.log(
+                                                            "Id is ",
+                                                            request.kycID
+                                                        );
+                                                        onReject(request.kycID);
+                                                    }}
+                                                    className="rejectButton"
+                                                    disabled={
+                                                        request.verificationStatus !==
+                                                        "pending"
+                                                    }
+                                                >
+                                                    Reject
+                                                </button>
                                             </td>
                                         </tr>
                                     );
@@ -699,63 +762,204 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                 </div>
             )}
 
-            {activeTab === "transactions" && (
-                <div className="adminTabContent">
-                    <h3>Pending Transactions</h3>
-                    {transactions.length === 0 ? (
-                        <p>No pending transactions.</p>
-                    ) : (
-                        <table className="adminTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Type</th>
-                                    <th>Amount</th>
-                                    <th>Initiation Time</th>
-                                    <th style={{ width: "100%" }}>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {transactions.map((tx) => (
-                                    <tr key={tx.transactionID}>
-                                        <td>{tx.transactionID}</td>
-                                        <td>{tx.type}</td>
-                                        <td>{tx.amount}</td>
+            <>
+                {activeTab === "transactions" && (
+                    <div className="adminTabContent">
+                        <h3>Pending Transactions</h3>
+                        {transactions.length === 0 ? (
+                            <p>No pending transactions.</p>
+                        ) : (
+                            <table className="adminTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Initiation Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {transactions.map((tx) => (
+                                        <tr key={tx.transactionID}>
+                                            <td>{tx.transactionID}</td>
+                                            <td>{tx.type}</td>
+                                            <td>{tx.amount}</td>
+                                            <td>
+                                                {new Date(
+                                                    tx.initiationTimestamp *
+                                                        1000
+                                                ).toLocaleString()}
+                                            </td>
+                                            <td className="actionButtons">
+                                                <button
+                                                    onClick={() =>
+                                                        showTransactionDetails(
+                                                            tx
+                                                        )
+                                                    }
+                                                    className="showTransactionDetailsButton"
+                                                >
+                                                    Show More Details
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        handleApproveTransaction(
+                                                            tx.transactionID,
+                                                            tx.senderID,
+                                                            tx.destinationWalletAddress,
+                                                            tx.amount
+                                                        )
+                                                    }
+                                                    className="approveButton"
+                                                >
+                                                    Approve
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+
+                        <h3>Transaction History</h3>
+                    </div>
+                )}
+
+                {selectedTransaction && (
+                    <div className="TransactionDetailsOverlay">
+                        <div className="TransactionDetailsContent">
+                            <span
+                                className="closeButton"
+                                onClick={hideTransactionDetails}
+                            >
+                                &times;
+                            </span>
+                            <h3>Transaction Details</h3>
+                            <table className="TransactionDetailsTable">
+                                <tbody>
+                                    <tr>
                                         <td>
-                                            {new Date(
-                                                tx.initiationTimestamp * 1000
-                                            ).toLocaleString()}
+                                            <strong>ID:</strong>
                                         </td>
-                                        <td className="actionButtons">
-                                            <button
-                                                onClick={() =>
-                                                    handleApproveTransaction(
-                                                        tx.transactionID,
-                                                        tx.senderID,
-                                                        tx.destinationWalletAddress,
-                                                        tx.amount
-                                                    )
-                                                }
-                                                className="approveButton"
-                                            >
-                                                Approve
-                                            </button>
-                                            {/* <button 
-                        onClick={() => handleRejectTransaction(tx.id)} 
-                        className="rejectButton"
-                      >
-                        Reject
-                      </button> */}
+                                        <td>
+                                            {selectedTransaction.transactionID}
                                         </td>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-
-                    <h3>Transaction History</h3>
-                </div>
-            )}
+                                    <tr>
+                                        <td>
+                                            <strong>Type:</strong>
+                                        </td>
+                                        <td>{selectedTransaction.type}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Amount:</strong>
+                                        </td>
+                                        <td>
+                                            {selectedTransaction.amount}{" "}
+                                            {selectedTransaction.currency}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Status:</strong>
+                                        </td>
+                                        <td>{selectedTransaction.status}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Sender ID:</strong>
+                                        </td>
+                                        <td>{selectedTransaction.senderID}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Source Login ID:</strong>
+                                        </td>
+                                        <td>
+                                            {selectedTransaction.sourceLoginId}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>
+                                                Destination Login ID:
+                                            </strong>
+                                        </td>
+                                        <td>
+                                            {selectedTransaction.destinationLoginId ??
+                                                "N/A"}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Source Wallet:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                selectedTransaction.sourceWalletAddress
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Destination Wallet:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                selectedTransaction.destinationWalletAddress
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Initiated:</strong>
+                                        </td>
+                                        <td>
+                                            {new Date(
+                                                selectedTransaction.initiationTimestamp *
+                                                    1000
+                                            ).toLocaleString()}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Completed:</strong>
+                                        </td>
+                                        <td>
+                                            {selectedTransaction.completionTimestamp
+                                                ? new Date(
+                                                      selectedTransaction.completionTimestamp *
+                                                          1000
+                                                  ).toLocaleString()
+                                                : "N/A"}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Fraud Type:</strong>
+                                        </td>
+                                        <td>{selectedTransaction.fraudType}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Severity:</strong>
+                                        </td>
+                                        <td>{selectedTransaction.severity}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Email:</strong>
+                                        </td>
+                                        <td>{selectedTransaction.email}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+            </>
 
             {activeTab === "clusters" && (
                 <div className="adminTabContent">
