@@ -360,9 +360,9 @@ const Dashboard = ({ onLogout }) => {
         const payfastFields = {
             merchant_id: "10038860",
             merchant_key: "2653kli77abkv",
-            return_url: "https://yourdomain.com/return",
-            cancel_url: "https://yourdomain.com/cancel",
-            notify_url: "https://yourdomain.com/notify",
+            // return_url: "https://yourdomain.com/return",
+            // cancel_url: "https://yourdomain.com/cancel",
+            // notify_url: "https://yourdomain.com/notify",
             amount: usdAmount.toFixed(2) * 280,
             item_name: "ETH Wallet Deposit",
             m_payment_id: `DEP_${Date.now()}`,
