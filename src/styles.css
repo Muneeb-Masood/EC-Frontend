@@ -3528,3 +3528,62 @@ textarea.input {
   font-weight: bold;
   width: 40%;
 }
+
+
+
+
+.transaction-logs-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.date-range-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.date-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-input label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.date-input input {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.generate-btn {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+}
+
+.upload-section label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.upload-section input[type="file"] {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

@@ -57,7 +57,7 @@ const SignupPage = ({ onSignup }) => {
         });
   
         // setShowOtpField(true);
-        setSuccessMessage("Account has been created Sucessfullt");
+        setSuccessMessage("A verification email has been sent to your email address.");
       } catch (error) {
         handleApiError(error, "Signup failed. Please try again.");
       } finally {

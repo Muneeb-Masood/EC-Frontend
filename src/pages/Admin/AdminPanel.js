@@ -437,6 +437,74 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
         }
     };
 
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
+
+    const getCurrentDateFormatted = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+
+    const handleGenerateLogs = async () => {
+        console.log("Generating logs from", fromDate, "to", toDate);
+        try {
+            const response = await axios.post(
+                `${API_BASE_URL}/api/getLog`,
+                {
+                    startDate: "2025-04-15",
+                    endDate: "2025-05-19",
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "AdminLoginToken"
+                        )}`,
+                    },
+                }
+            );
+
+            if (response.data && typeof response.data === "string") {
+                const csvData = response.data;
+
+                const currentDate = getCurrentDateFormatted();
+
+                const fileName = `transaction_log_${currentDate}_from_${fromDate}_to_${toDate}.csv`;
+
+                const blob = new Blob([csvData], {
+                    type: "text/csv;charset=utf-8;",
+                });
+
+                const link = document.createElement("a");
+
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", fileName);
+
+                link.style.visibility = "hidden"; 
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                URL.revokeObjectURL(url);
+
+                setNotification({
+                    type: "success",
+                    message: `Log "${fileName}" generated and download started.`,
+                });
+            }
+        } catch (error) {
+            handleApiError(error, "Cannot fetch transaction data");
+        }
+    };
+
+    const handleUploadCSV = (e) => {
+
+    };
+
     const [selectedTransaction, setSelectedTransaction] = useState(null);
 
     const showTransactionDetails = (tx) => {
@@ -586,6 +654,14 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                     onClick={() => setActiveTab("clusters")}
                 >
                     Clusters
+                </button>
+                <button
+                    className={`adminTab ${
+                        activeTab === "transactionLogs" ? "activeAdminTab" : ""
+                    }`}
+                    onClick={() => setActiveTab("transactionLogs")}
+                >
+                    Transaction Logs
                 </button>
             </div>
 
@@ -1128,6 +1204,49 @@ const AdminPanel = ({ kycRequests, onApprove, onReject }) => {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {activeTab === "transactionLogs" && (
+                <>
+                    <div className="transaction-logs-container">
+                        {/* Date Range Selector */}
+                        <div className="date-range-row">
+                            <div className="date-input">
+                                <label>From:</label>
+                                <input
+                                    type="date"
+                                    value={fromDate}
+                                    onChange={(e) =>
+                                        setFromDate(e.target.value)
+                                    }
+                                />
+                            </div>
+                            <div className="date-input">
+                                <label>To:</label>
+                                <input
+                                    type="date"
+                                    value={toDate}
+                                    onChange={(e) => setToDate(e.target.value)}
+                                />
+                            </div>
+                            <button
+                                onClick={handleGenerateLogs}
+                                className="generate-btn"
+                            >
+                                Generate Logs
+                            </button>
+                        </div>
+
+                        <div className="upload-section">
+                            <label>Upload CSV:</label>
+                            <input
+                                type="file"
+                                accept=".csv"
+                                onChange={handleUploadCSV}
+                            />
+                        </div>
+                    </div>
+                </>
             )}
 
             <div className="adminFooter">
